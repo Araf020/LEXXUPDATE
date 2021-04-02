@@ -1,5 +1,7 @@
 # LEXICAL
 
+https://linuxize.com/post/how-to-install-git-on-ubuntu-18-04/
+
 git remote add origin https://github.com/Araf020/LEXICAL.git
 git add -a
 git add scanner.l
