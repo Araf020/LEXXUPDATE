@@ -1,6 +1,12 @@
 # LEXICAL
 
 https://linuxize.com/post/how-to-install-git-on-ubuntu-18-04/
+git config --global user.name "user_name"
+
+git config --global user.email "email_id"
+git init Mytest
+Initialized empty Git repository in /home/akshay/Mytest/.git/
+cd Mytest
 
 git remote add origin https://github.com/Araf020/LEXICAL.git
 git add -a
