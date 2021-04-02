@@ -1,0 +1,3 @@
+Line no 1: TOKEN <IF> Lexeme if found
+Line no 1: TOKEN <ELSE> Lexeme else found
+Line no 1: TOKEN <INT> Lexeme 123 found
