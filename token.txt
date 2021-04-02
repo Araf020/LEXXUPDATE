@@ -1,1 +1,1 @@
-<IF><ELSE><CONST_INT, 123>
+<INT><ID, main> <LPAREN, (> <RPAREN, )> <LCURL, {> <INT><ID, a> <COMMA, ,> <ID, b> <SEMICOLON, ;> <ID, a> <ASSIGNOP, => <ID, a> <ADDOP, +> <CONST_INT, 1> <SEMICOLON, ;> <TAB, 	> <CHAR> <ID, ch> <ASSIGNOP, => <ID, a> <SEMICOLON, ;> <ID, ch> <ASSIGNOP, => <TAB, 	> <SEMICOLON, ;> <CHAR> <ID, c> <LTHIRD, [> <RTHIRD, ]> <ASSIGNOP, => <LITERALS, "ab\td"> <SEMICOLON, ;> <ID, printf> <LPAREN, (> <ID, abc> <ID, def> <ID, ghi> <RPAREN, )> <SEMICOLON, ;> <RETURN> <CONST_INT, 0> <SEMICOLON, ;> <RCURL, }> 
