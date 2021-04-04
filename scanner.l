@@ -95,9 +95,9 @@ SQ_MULTI_CHAR ['][a-zA-Z](.+)[']
 
 
 
-SKIP [/][/]+(.*)[\\][\r\n].*
+SKIP1 [\/][\/]+(.*)[\\][\r\n](.*)[\r\n]
 
-SKIP1 ([/])+[*/]+(.*)([\*][/])?
+SKIP [\/][\/](.*)[\r\n]
 
 SKIP2 ([/][\*]([^*]|[\r\n]|(\*([^/]|[\r\n])))*[\*][/\\])|[/][/]+(.*)[\\]?[\r\n][\w+]?[\r\n]?
 
@@ -199,12 +199,7 @@ DIGIT [0-9]
 
 
 
-[/][\*]+ {BEGIN MSCOMMENT;}
-<MSCOMMENT>(.*)[\*][/] {}
-<MSCOMMENT>. {printf("UNFINISHED COMMENT\n");}
 
-[/][/]+ {BEGIN SLINECOMMENT;}
-[\/][\*]+ {line_count++; BEGIN MULTILINECOMMENT; }
 
 <SLINECOMMENT>[\\][\r\n](.*)[\r\n]  {line_count++;line_count++; BEGIN INITIAL;}
 <SLINECOMMENT>(.*)[\r\n]            {line_count++; BEGIN INITIAL;}
@@ -222,6 +217,27 @@ DIGIT [0-9]
 {IDENTIFIER_ERROR} {printf("\n%s is an IDENTIFIER_ERROR\n",yytext);}
 {DECIMAL_POINT_ERROR} {printf("\n%s DECIMALPOINTER_ERROR\n",yytext);}
 {ILL_FORMAT_ERROR} {printf("\n%s is an ILL_FORMAT_ERROR\n",yytext);}
+
+{SKIP2} {
+
+	printf("NO ACTION\n");
+	string str(yytext);
+	char str1[str.length()];
+
+	strcpy(str1,str.c_str());
+
+	for(int i=0;i<str.length();i++){
+		if (str1[i]=='\n') {
+			line_count++;
+		}
+	}
+
+
+}
+
+{SKIP} {printf("NO ACTION\n");line_count++;}
+{SKIP1} {printf("no action\n");line_count+=2;}
+
 
 
 (switch) {printf(" <%s> found\n",yytext);

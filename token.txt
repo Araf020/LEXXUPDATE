@@ -1,1 +1,1 @@
-<STRING, 
+<MULOP, /> <MULOP, /> <ID, dlsa> 
