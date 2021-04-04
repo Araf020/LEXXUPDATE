@@ -2,6 +2,7 @@
 
 %x END_WITH_SQ
 %x END_WITH_DQ
+%x String_literals_check
 
 %{
 #include<stdio.h>
@@ -9,17 +10,21 @@
 #include<iostream>
 #include "SymbolTable.cpp"
 
+using namespace std;
 
 
 
 int line_count=1;
 SymbolTable sTable(7);
+string String_literals;
+string const_character;
+
 
 FILE *logout;
 FILE *tokenout;
 
 %}
-
+NEWLINE \n
 IDENTIFIER [a-zA-Z][a-zA-Z0-9]*
 IDENTIFIER_ERROR [0-9]+[a-zA-Z]+[a-zA-Z0-9]*
 
@@ -34,13 +39,21 @@ TAB ['][\\][t][']
 
 CONST_c ['][a-zA-Z][']
 IF_DQ [\"]
-IF_END_DQ ((.*)[\\]?[\r\n]*)*[\"]
+IF_END_DQ ((.*)[\\]?(.*)[\r\n]*(.*))*[\"]
+DQ_CHECK  [\r\n]*(.*)[\r\n]*
+DQ_ESCAPE [\\][ \r\n\t]*
+DQ_END [\"]
 
-LITERALS [\"]((.*)[\\]?[\r\n]*)*[\"]
+ANYTHING ([^\r\n]|{NEWLINE})
+STRINGERROR \"([^"\\\r\n]|[\\]{ANYTHING})*
+
+STRINGLITERALS {STRINGERROR}\"
+
+LITERALS [\"]((.*)[\\]?(.*)[\r\n]*)*[\"]
 
 LIT [\"](.*)[\\]+?[\r\n]*?[\\]+?[\"]
 
-DQLITERALS ([\"'])(?:(?=(\\?))\2.[\\]*[\r\n]*[\\]*)*?\1
+
 
 LITERALS1 ^[^"]*?('[^"]+?')[\r\n]*[^"]*
 
@@ -68,6 +81,7 @@ COMMA [,]
 SEMICOLON [;]
 
 CHECKNOTFINISHED ['][a-zA-Z]['](.*)
+
 SQ_CHECK (['](.*)['])
 END_SQ [a-zA-Z][']
 SQ_MULTI_CHAR ['][a-zA-Z](.+)[']
@@ -82,36 +96,64 @@ SKIP2 ([/][\*]([^*]|[\r\n]|(\*([^/]|[\r\n])))*[\*][/\\])|[/][/]+(.*)[\\]?[\r\n][
 WHITESPACE [ \t\f\r\v]+ 
 LETTER [a-zA-Z]
 DIGIT [0-9]
-NEWLINE \n
+
 
 %%
 
-
-{CHECKNOTFINISHED} {
-			printf("CONST_CHAR <%s> found\n",yytext);
-			fprintf(tokenout,"<CONST_CHAR, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <CONST_CHAR> Lexeme %s found\n",line_count,yytext);
-			//sTable.push("COMMA",yytext);
+['] {
+			
 	BEGIN END_WITH_SQ;
-				}
+	}
+
+
+
+<END_WITH_SQ>[a-zA-Z0-9]|[\\] {
+	    string str(yytext);
+	    const_character = str;
+
+	    
+	
+	
+	}
+<END_WITH_SQ>['] {
+
+			char output[const_character.length()+1];
+			
+			printf("<CONST_C, %s> \n",output);
+			fprintf(tokenout,"<CONST_CHAR, %s> ",output);
+		   
+			//fprintf(logout,"Line no %d: TOKEN <CONST_CHAR> Lexeme %s found\n",line_count,const_character);
+			BEGIN INITIAL;
+		       
+		        }
+
+<END_WITH_SQ>[\\][t]['] {
+	cout<<"CONST_CHAR: \t\n";
+
+	BEGIN INITIAL;
+}		        
+<END_WITH_SQ>.          {
+								printf("UNFINISHED ERROR at Line: %d\n",line_count);
+
+								
+								fprintf(logout,"Line no %d: TOKEN <Error> Lexeme %s found\n",line_count,yytext);
+			
+								BEGIN INITIAL;
+						  
+						  }
+
+
 
 
 
 {SQ_MULTI_CHAR}    {
-							printf("CONST_MULTI_CHAR ERROR <%s> found\n",yytext);
+							printf("CONST_MULTI_CHAR ERROR at Line: %d\n",line_count);
 							//fprintf(tokenout,"<CONST_MULTI_CHAR, %s> ",yytext);
 							fprintf(logout,"Line no %d: ERROR <CONST_MULTI_CHAR> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("COsMMA",yytext);
 									BEGIN INITIAL;
 
 							    }
-<END_WITH_SQ>.            {
-								printf("UNFINISHED ERROR <%s> found\n",yytext);
-								
-								fprintf(logout,"Line no %d: TOKEN <Error> Lexeme %s found\n",line_count,yytext);
-			//sTable.push("COMMA",yytext);
-								BEGIN INITIAL;
-						  }
 
 
 
@@ -126,7 +168,11 @@ NEWLINE \n
 <END_WITH_DQ>. {printf("DQ NOT finished"); BEGIN INITIAL;}
 
 
+
 {NEWLINE} {line_count++;}
+
+
+
 
 [ \t\v]+ {}
 
@@ -231,8 +277,8 @@ NEWLINE \n
 
 
 {TAB} {printf("TAB <\t> found\n");
-			fprintf(tokenout,"<TAB, \t> ");
-			fprintf(logout,"Line no %d: TOKEN <SPECIALS> Lexeme \t found\n",line_count);
+			fprintf(tokenout,"<CONST_CHAR, \t> ");
+			fprintf(logout,"Line no %d: TOKEN <CONST_CHAR> Lexeme \t found\n",line_count);
 			//sTable.push("COMMA",yytext);
 	//	outputfile<<"<COMMA, "<<yytext;
 		}
@@ -311,18 +357,11 @@ NEWLINE \n
 	}
 
 
-{LIT} {printf("LITERALS <%s> found\n",yytext);
-			fprintf(tokenout,"<LITERALS, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <LITERALS> Lexeme %s found\n",line_count,yytext);
-			}
 
-{CHECKNOTFINISHED} {
-					printf("%s not finished  sq Error on Line: %d\n",yytext,line_count);
-					
-					}
 
-{LITERALS} {printf("\nLITERALS FOUND: %s",yytext);}
+{STRINGLITERALS} {printf("STRING , %s\n",yytext);}
 
+{STRINGERROR} {printf("STRING UNFINISHED ERROR\n");}
 {IDENTIFIER} {printf("id <%s> found\n",yytext);
 			fprintf(tokenout,"<ID, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <ID> Lexeme %s found\n",line_count,yytext);
