@@ -2,7 +2,10 @@
 
 %x END_WITH_SQ
 %x END_WITH_DQ
-%x String_literals_check
+%x STRING_LIT
+%x SLINECOMMENT
+%x MULTILINECOMMENT
+%x MSCOMMENT
 
 %{
 #include<stdio.h>
@@ -16,7 +19,10 @@ using namespace std;
 
 int line_count=1;
 SymbolTable sTable(7);
-string String_literals;
+string c;
+string String_literals1;
+string String_literals2;
+
 string const_character;
 
 
@@ -26,12 +32,12 @@ FILE *tokenout;
 %}
 NEWLINE \n
 IDENTIFIER [a-zA-Z][a-zA-Z0-9]*
+
 IDENTIFIER_ERROR [0-9]+[a-zA-Z]+[a-zA-Z0-9]*
 
 DECIMAL_POINT_ERROR ([0-9]*[.][0-9]*[.]+[0-9]*)+
 
-
-ILL_FORMAT_ERROR ([0-9]*\.?[0-9]+[.]?)*([eE][-+]?[0-9]+[.][0-9]*)?
+ILL_FORMAT_ERROR ([0-9]*\.?[0-9]+[.]?)*[eE][-+]?[0-9]+[.][0-9]*
 
 
 SPECIALS ['][\\][a-z]+[']
@@ -55,9 +61,10 @@ LIT [\"](.*)[\\]+?[\r\n]*?[\\]+?[\"]
 
 
 
+
 LITERALS1 ^[^"]*?('[^"]+?')[\r\n]*[^"]*
 
-CONST_INT [0-9]+
+CONST_INT [0-9]+[ \t]?
 CONST_FLOAT [0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?
 
 MULOP [*/%]
@@ -87,6 +94,7 @@ END_SQ [a-zA-Z][']
 SQ_MULTI_CHAR ['][a-zA-Z](.+)[']
 
 
+
 SKIP [/][/]+(.*)[\\][\r\n].*
 
 SKIP1 ([/])+[*/]+(.*)([\*][/])?
@@ -99,27 +107,47 @@ DIGIT [0-9]
 
 
 %%
+{NEWLINE} {line_count++;}
+
+["] {BEGIN STRING_LIT;}
+<STRING_LIT>(.*)[\\] {}
+<STRING_LIT>[\\][n] {} 
+
+
 
 ['] {
-			
+	
+	string str(yytext);
+	c = str;
 	BEGIN END_WITH_SQ;
+
 	}
 
+['][\\]['] {printf("sq UNFINISHED Error at line %d: %s\n",line_count,yytext);}
+
+<END_WITH_SQ>[a-zA-Z0-9]  {
+						    string str(yytext);
+						    const_character = str;
+						    c = c + str;
+
+						  }
+
+<END_WITH_SQ>[\r\n]       {
+							char output[c.length()+1];
+							strcpy(output,c.c_str());
+							printf("UNFINISHED ERROR at Line: %d: %s\n",line_count, output);
+							line_count++;
+							BEGIN INITIAL;
+
+					      }
 
 
-<END_WITH_SQ>[a-zA-Z0-9]|[\\] {
-	    string str(yytext);
-	    const_character = str;
-
-	    
-	
-	
-	}
 <END_WITH_SQ>['] {
 
 			char output[const_character.length()+1];
-			
-			printf("<CONST_C, %s> \n",output);
+
+			strcpy(output,const_character.c_str());
+			printf("<CONST_C, %s> at Line: %d\n",output,line_count);
 			fprintf(tokenout,"<CONST_CHAR, %s> ",output);
 		   
 			//fprintf(logout,"Line no %d: TOKEN <CONST_CHAR> Lexeme %s found\n",line_count,const_character);
@@ -128,6 +156,7 @@ DIGIT [0-9]
 		        }
 
 <END_WITH_SQ>[\\][t]['] {
+
 	cout<<"CONST_CHAR: \t\n";
 
 	BEGIN INITIAL;
@@ -147,7 +176,7 @@ DIGIT [0-9]
 
 
 {SQ_MULTI_CHAR}    {
-							printf("CONST_MULTI_CHAR ERROR at Line: %d\n",line_count);
+							printf("CONST_MULTI_CHAR ERROR at Line: %d: %s\n",line_count,yytext);
 							//fprintf(tokenout,"<CONST_MULTI_CHAR, %s> ",yytext);
 							fprintf(logout,"Line no %d: ERROR <CONST_MULTI_CHAR> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("COsMMA",yytext);
@@ -169,12 +198,31 @@ DIGIT [0-9]
 
 
 
-{NEWLINE} {line_count++;}
 
+[/][\*]+ {BEGIN MSCOMMENT;}
+<MSCOMMENT>(.*)[\*][/] {}
+<MSCOMMENT>. {printf("UNFINISHED COMMENT\n");}
+
+[/][/]+ {BEGIN SLINECOMMENT;}
+[\/][\*]+ {line_count++; BEGIN MULTILINECOMMENT; }
+
+<SLINECOMMENT>[\\][\r\n](.*)[\r\n]  {line_count++;line_count++; BEGIN INITIAL;}
+<SLINECOMMENT>(.*)[\r\n]            {line_count++; BEGIN INITIAL;}
+<MULTILINECOMMENT>(.*) {}
+<MULTILINECOMMENT>[\r\n] 		{line_count++;}
+<MULTILINECOMMENT>[\*]+[/]   		{BEGIN INITIAL;}
+
+
+	
 
 
 
 [ \t\v]+ {}
+
+{IDENTIFIER_ERROR} {printf("\n%s is an IDENTIFIER_ERROR\n",yytext);}
+{DECIMAL_POINT_ERROR} {printf("\n%s DECIMALPOINTER_ERROR\n",yytext);}
+{ILL_FORMAT_ERROR} {printf("\n%s is an ILL_FORMAT_ERROR\n",yytext);}
+
 
 (switch) {printf(" <%s> found\n",yytext);
 		  //outputfile<<"<SWITCH> ";	
@@ -359,28 +407,92 @@ DIGIT [0-9]
 
 
 
-{STRINGLITERALS} {printf("STRING , %s\n",yytext);}
+{LITERALS} {
 
-{STRINGERROR} {printf("STRING UNFINISHED ERROR\n");}
-{IDENTIFIER} {printf("id <%s> found\n",yytext);
-			fprintf(tokenout,"<ID, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <ID> Lexeme %s found\n",line_count,yytext);
-		
-		//outputfile<<"<ID, "<<yytext;
-	}
+					printf("<STRING , %s>\n",yytext);
+					string str(yytext);
+
+					char output[str.length()];
+					char output2[str.length()];
+
+					strcpy(output,str.c_str());
+					char qq;
+					
+					fprintf(tokenout,"<STRING, ");
+					
+					for(int i=0;i<strlen(yytext);i++){
+						if(output[i]=='\\' && output[i+1]=='t'){
+							  output2[i]='\t';
+							  qq = '\t';
+							  printf("%c",qq);
+							 
+							  i++;
+							  continue;
+
+						}
+						else if (output[i]=='\\' && output[i+1]=='n') {
+							output2[i] = '\n';
+							qq = '\n';
+							  printf("%c",qq);
+							i++;
+							continue;
+						}
+						
+						else if (output[i]=='\\' && output[i+1]=='b') {
+							output2[i]='\b';
+							qq = '\b';
+							  printf("%c",qq);
+							i++;
+							continue;
+						}
+						else if(output[i]=='\n'){
+							
+							output2[i]='\n';
+							qq = '\n';
+							  printf("%c",qq);
+							line_count++;
+							
+							continue;
+						}
+						else if(output[i]=='\\'){
+							
+							
+
+						}
+						
+
+						else if(output[i]=='\\' && output[i+1]=='\n'){
+							
+							
+							i++;
+							line_count++;
+
+							continue;
+						}
+						else {
+							output2[i] = output[i];
+
+							printf("%c",output[i]);
+						}
+
+					}
+					cout<<endl;
+				
+					
+					
+
+				}
+
 
 {CONST_INT} {printf("%s CONST_INT\n",yytext);
 			fprintf(tokenout,"<CONST_INT, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <INT> Lexeme %s found\n",line_count,yytext);
 			}
+
 {CONST_FLOAT} {printf("%s CONST_FLOAT\n",yytext);
 			fprintf(tokenout,"<CONST_FLOAT, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <CONST_FLOAT> Lexeme %s found\n",line_count,yytext);
 			}
-
-{IDENTIFIER_ERROR} {printf("\n%s is an IDENTIFIER_ERROR\n",yytext);}
-{DECIMAL_POINT_ERROR} {printf("\n%s DECIMALPOINTER_ERROR\n",yytext);}
-{ILL_FORMAT_ERROR} {printf("\n%s is an ILL_FORMAT_ERROR\n",yytext);}
 
 {ASSIGNOP} {printf("ASSIGNOP <%s> found\n",yytext);
 			fprintf(tokenout,"<ASSIGNOP, %s> ",yytext);
@@ -388,20 +500,24 @@ DIGIT [0-9]
 		
 		//outputfile<<"<ASSIGNOP, "<<yytext;
 	}
-{SKIP} {printf("skip of bal : \n%s\n ",yytext);}
-{SKIP2} {printf("SKIP, NO ACTION\n%s\n",yytext);
+
+
+{IDENTIFIER} {printf("IDENTIFIER <%s> found\n",yytext);
+			fprintf(tokenout,"<ID, %s> ",yytext);
+			fprintf(logout,"Line no %d: TOKEN <ID> Lexeme %s found\n",line_count,yytext);
 		
-		
+		//outputfile<<"<ID, "<<yytext;
 	}
 
 
 
 
-{MULOP} {printf("%s mulop\n",yytext);
+
+
+{MULOP} {printf("<%s, MULOP>\n",yytext);
 			fprintf(tokenout,"<MULOP, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <MULOP> Lexeme %s found\n",line_count,yytext);
 			}
-
 {ADDOP} {printf("<%s, ADDOP>\n",yytext);
 			fprintf(tokenout,"<ADDOP, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <ADDOP> Lexeme %s found\n",line_count,yytext);
@@ -415,10 +531,7 @@ DIGIT [0-9]
 			fprintf(tokenout,"<RELOP, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <RELOP> Lexeme %s found\n",line_count,yytext);
 			}
-{LTHIRD} {printf("%s LTHIRD\n",yytext);
-			fprintf(tokenout,"<LTHIRD, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <LTHIRD> Lexeme %s found\n",line_count,yytext);
-			}
+
 
 
 <<EOF>> {printf("Total Line Number: %d \n",line_count); return 0;}
