@@ -419,6 +419,12 @@ DIGIT [0-9]
 					char qq;
 					
 					fprintf(tokenout,"<STRING, ");
+
+					for(int i=0;i<str.length();i++){
+						printf("%c",output[i]);
+					}
+					cout<<endl<<endl;
+
 					
 					for(int i=0;i<strlen(yytext);i++){
 						if(output[i]=='\\' && output[i+1]=='t'){
@@ -446,7 +452,12 @@ DIGIT [0-9]
 							continue;
 						}
 						else if(output[i]=='\n'){
-							
+							if(output[i-1]=='\\'){
+								line_count++;
+								
+								continue;
+							}
+
 							output2[i]='\n';
 							qq = '\n';
 							  printf("%c",qq);
@@ -461,14 +472,7 @@ DIGIT [0-9]
 						}
 						
 
-						else if(output[i]=='\\' && output[i+1]=='\n'){
-							
-							
-							i++;
-							line_count++;
-
-							continue;
-						}
+						
 						else {
 							output2[i] = output[i];
 
@@ -477,6 +481,8 @@ DIGIT [0-9]
 
 					}
 					cout<<endl;
+					
+				
 				
 					
 					
