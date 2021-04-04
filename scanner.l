@@ -1,6 +1,8 @@
 %option noyywrap
 
 %x END_WITH_SQ
+%x END_WITH_DQ
+
 %{
 #include<stdio.h>
 #include<stdlib.h>
@@ -19,11 +21,27 @@ FILE *tokenout;
 %}
 
 IDENTIFIER [a-zA-Z][a-zA-Z0-9]*
+IDENTIFIER_ERROR [0-9]+[a-zA-Z]+[a-zA-Z0-9]*
+
+DECIMAL_POINT_ERROR ([0-9]*[.][0-9]*[.]+[0-9]*)+
+
+
+ILL_FORMAT_ERROR ([0-9]*\.?[0-9]+[.]?)*([eE][-+]?[0-9]+[.][0-9]*)?
+
+
 SPECIALS ['][\\][a-z]+[']
 TAB ['][\\][t][']
 
-LITERALS [\"](.*)[\\]?[\r\n]*[\"]
+CONST_c ['][a-zA-Z][']
+IF_DQ [\"]
+IF_END_DQ ((.*)[\\]?[\r\n]*)*[\"]
+
+LITERALS [\"]((.*)[\\]?[\r\n]*)*[\"]
+
 LIT [\"](.*)[\\]+?[\r\n]*?[\\]+?[\"]
+
+DQLITERALS ([\"'])(?:(?=(\\?))\2.[\\]*[\r\n]*[\\]*)*?\1
+
 LITERALS1 ^[^"]*?('[^"]+?')[\r\n]*[^"]*
 
 CONST_INT [0-9]+
@@ -49,14 +67,17 @@ RTHIRD [\]]
 COMMA [,]
 SEMICOLON [;]
 
-CHECKNOTFINISHED ['].*[^']$|['].*[^'][\w+]$
+CHECKNOTFINISHED ['][a-zA-Z]['](.*)
 SQ_CHECK (['](.*)['])
-NOT_END_WITH_SQ (.*)^[']
+END_SQ [a-zA-Z][']
+SQ_MULTI_CHAR ['][a-zA-Z](.+)[']
 
-SKIP [/][/]|[/][\*]
+
+SKIP [/][/]+(.*)[\\][\r\n].*
+
 SKIP1 ([/])+[*/]+(.*)([\*][/])?
 
-SKIP2 ([/][\*]([^*]|[\r\n]|(\*([^/]|[\r\n])))*[\*][/\\])|[/][/]+(.*)[\r\n]
+SKIP2 ([/][\*]([^*]|[\r\n]|(\*([^/]|[\r\n])))*[\*][/\\])|[/][/]+(.*)[\\]?[\r\n][\w+]?[\r\n]?
 
 WHITESPACE [ \t\f\r\v]+ 
 LETTER [a-zA-Z]
@@ -66,11 +87,49 @@ NEWLINE \n
 %%
 
 
+{CHECKNOTFINISHED} {
+			printf("CONST_CHAR <%s> found\n",yytext);
+			fprintf(tokenout,"<CONST_CHAR, %s> ",yytext);
+			fprintf(logout,"Line no %d: TOKEN <CONST_CHAR> Lexeme %s found\n",line_count,yytext);
+			//sTable.push("COMMA",yytext);
+	BEGIN END_WITH_SQ;
+				}
+
+
+
+{SQ_MULTI_CHAR}    {
+							printf("CONST_MULTI_CHAR ERROR <%s> found\n",yytext);
+							//fprintf(tokenout,"<CONST_MULTI_CHAR, %s> ",yytext);
+							fprintf(logout,"Line no %d: ERROR <CONST_MULTI_CHAR> Lexeme %s found\n",line_count,yytext);
+			//sTable.push("COsMMA",yytext);
+									BEGIN INITIAL;
+
+							    }
+<END_WITH_SQ>.            {
+								printf("UNFINISHED ERROR <%s> found\n",yytext);
+								
+								fprintf(logout,"Line no %d: TOKEN <Error> Lexeme %s found\n",line_count,yytext);
+			//sTable.push("COMMA",yytext);
+								BEGIN INITIAL;
+						  }
+
+
+
+<END_WITH_DQ>{IF_END_DQ} {
+							printf("LITERALS FOUND: <%s> \n",yytext);
+							fprintf(tokenout,"<STRING, %s> ",yytext);
+							fprintf(logout,"Line no %d: TOKEN <STRING> Lexeme %s found\n",line_count,yytext);
+			//sTable.push("COMMA",yytext);
+							BEGIN INITIAL;
+					     }
+
+<END_WITH_DQ>. {printf("DQ NOT finished"); BEGIN INITIAL;}
 
 
 {NEWLINE} {line_count++;}
 
 [ \t\v]+ {}
+
 (switch) {printf(" <%s> found\n",yytext);
 		  //outputfile<<"<SWITCH> ";	
 			fprintf(tokenout,"<SWITCH> ");
@@ -258,34 +317,18 @@ NEWLINE \n
 			}
 
 {CHECKNOTFINISHED} {
-					printf("%s CHECKNOTFINISHED sq\n",yytext);
+					printf("%s not finished  sq Error on Line: %d\n",yytext,line_count);
 					
 					}
 
-<END_WITH_SQ>{NOT_END_WITH_SQ} {
-								printf("ERROR! not finished with sq \n");
-								BEGIN INITIAL;
+{LITERALS} {printf("\nLITERALS FOUND: %s",yytext);}
 
-								}
 {IDENTIFIER} {printf("id <%s> found\n",yytext);
 			fprintf(tokenout,"<ID, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <ID> Lexeme %s found\n",line_count,yytext);
 		
 		//outputfile<<"<ID, "<<yytext;
 	}
-
-
-{ASSIGNOP} {printf("ASSIGNOP <%s> found\n",yytext);
-			fprintf(tokenout,"<ASSIGNOP, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <ASSIGNOP> Lexeme %s found\n",line_count,yytext);
-		
-		//outputfile<<"<ASSIGNOP, "<<yytext;
-	}
-{SKIP2} {printf("SKIP, NO ACTION\n%s\n",yytext);
-		
-		
-	}
-
 
 {CONST_INT} {printf("%s CONST_INT\n",yytext);
 			fprintf(tokenout,"<CONST_INT, %s> ",yytext);
@@ -295,6 +338,25 @@ NEWLINE \n
 			fprintf(tokenout,"<CONST_FLOAT, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <CONST_FLOAT> Lexeme %s found\n",line_count,yytext);
 			}
+
+{IDENTIFIER_ERROR} {printf("\n%s is an IDENTIFIER_ERROR\n",yytext);}
+{DECIMAL_POINT_ERROR} {printf("\n%s DECIMALPOINTER_ERROR\n",yytext);}
+{ILL_FORMAT_ERROR} {printf("\n%s is an ILL_FORMAT_ERROR\n",yytext);}
+
+{ASSIGNOP} {printf("ASSIGNOP <%s> found\n",yytext);
+			fprintf(tokenout,"<ASSIGNOP, %s> ",yytext);
+			fprintf(logout,"Line no %d: TOKEN <ASSIGNOP> Lexeme %s found\n",line_count,yytext);
+		
+		//outputfile<<"<ASSIGNOP, "<<yytext;
+	}
+{SKIP} {printf("skip of bal : \n%s\n ",yytext);}
+{SKIP2} {printf("SKIP, NO ACTION\n%s\n",yytext);
+		
+		
+	}
+
+
+
 
 {MULOP} {printf("%s mulop\n",yytext);
 			fprintf(tokenout,"<MULOP, %s> ",yytext);
@@ -318,6 +380,7 @@ NEWLINE \n
 			fprintf(tokenout,"<LTHIRD, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <LTHIRD> Lexeme %s found\n",line_count,yytext);
 			}
+
 
 <<EOF>> {printf("Total Line Number: %d \n",line_count); return 0;}
 . {}
@@ -352,3 +415,4 @@ int main(int argc,char *argv[]){
 	fclose(logout);
 	return 0;
 }
+
