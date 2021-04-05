@@ -292,14 +292,14 @@ DIGIT [0-9]
 
 								printf("single\n");line_count+=2;
 								//fprintf(logout,"\nError at line no %d: Unterminated Comment %s....\n",line_count,yytext);
-							    fprintf(logout,"\nLine no %d: Token <COMMENT> Lexeme %s comment found\n",line_count,yytext);
+							    fprintf(logout,"\nLine no %d: Token <COMMENT> Lexeme %s found\n",line_count,yytext);
 
 							    }
 
 "//"(.*)[\r\n]			     {
 								printf("single\n");line_count++;
 								//fprintf(logout,"\nError at line no %d: Unterminated Comment %s....\n",line_count,yytext);
-								fprintf(logout,"\nLine no %d: Token <COMMENT> Lexeme %s comment found\n",line_count,yytext);
+								fprintf(logout,"\nLine no %d: Token <COMMENT> Lexeme %s found\n",line_count,yytext);
 
 
 							 }

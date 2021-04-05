@@ -399,7 +399,7 @@ void scopeTable::displayTable(FILE *logout)
             outputfile << "< " << current->key << " : " << current->value << " > ";
             
                 /* code */
-                fprintf(logout, "< %s : %s > ",out2,out1);
+                fprintf(logout, "< %s : %s> ",out2,out1);
             
             
             current = current->next;

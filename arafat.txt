@@ -8,10 +8,85 @@ ScopeTable # 1
 
 
 New ScopeTable with id 1.1 created
-for a index: 6
+for str1 index: 2
+Inserted in ScopeTable# 1.1 at position 2,0
+ScopeTable # 1.1
+2 --> < ID : str1 > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+for 100 index: 5
+Inserted in ScopeTable# 1.1 at position 5,0
+ScopeTable # 1.1
+2 --> < ID : str1 > 
+5 --> < CONST_INT : 100 > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+for str2 index: 3
+Inserted in ScopeTable# 1.1 at position 3,0
+ScopeTable # 1.1
+2 --> < ID : str1 > 
+3 --> < ID : str2 > 
+5 --> < CONST_INT : 100 > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+
+100 already exists in current ScopeTable
+
+
+for str3 index: 4
+Inserted in ScopeTable# 1.1 at position 4,0
+ScopeTable # 1.1
+2 --> < ID : str1 > 
+3 --> < ID : str2 > 
+4 --> < ID : str3 > 
+5 --> < CONST_INT : 100 > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+
+100 already exists in current ScopeTable
+
+
+for str4 index: 5
+Inserted in ScopeTable# 1.1 at position 5,1
+ScopeTable # 1.1
+2 --> < ID : str1 > 
+3 --> < ID : str2 > 
+4 --> < ID : str3 > 
+5 --> < CONST_INT : 100 > < ID : str4 > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+
+100 already exists in current ScopeTable
+
+
+for str5 index: 6
 Inserted in ScopeTable# 1.1 at position 6,0
 ScopeTable # 1.1
-6 --> < ID : a > 
+2 --> < ID : str1 > 
+3 --> < ID : str2 > 
+4 --> < ID : str3 > 
+5 --> < CONST_INT : 100 > < ID : str4 > 
+6 --> < ID : str5 > 
 
 
 ScopeTable # 1
@@ -19,14 +94,18 @@ ScopeTable # 1
 
 
 
-a already exists in current ScopeTable
+100 already exists in current ScopeTable
 
 
-for 2 index: 1
-Inserted in ScopeTable# 1.1 at position 1,0
+for str6 index: 0
+Inserted in ScopeTable# 1.1 at position 0,0
 ScopeTable # 1.1
-1 --> < CONST_INT : 2 > 
-6 --> < ID : a > 
+0 --> < ID : str6 > 
+2 --> < ID : str1 > 
+3 --> < ID : str2 > 
+4 --> < ID : str3 > 
+5 --> < CONST_INT : 100 > < ID : str4 > 
+6 --> < ID : str5 > 
 
 
 ScopeTable # 1
@@ -34,33 +113,18 @@ ScopeTable # 1
 
 
 
-New ScopeTable with id 1.1.1 created
-for b index: 0
-Inserted in ScopeTable# 1.1.1 at position 0,0
-ScopeTable # 1.1.1
-0 --> < ID : b > 
+100 already exists in current ScopeTable
 
 
-ScopeTable # 1.1
-1 --> < CONST_INT : 2 > 
-6 --> < ID : a > 
-
-
-ScopeTable # 1
-1 --> < ID : main > 
-
-
-
-b already exists in current ScopeTable
-
-
-
-ScopeTable with id 1.1.1 removed
 for 0 index: 6
 Inserted in ScopeTable# 1.1 at position 6,1
 ScopeTable # 1.1
-1 --> < CONST_INT : 2 > 
-6 --> < ID : a > < CONST_INT : 0 > 
+0 --> < ID : str6 > 
+2 --> < ID : str1 > 
+3 --> < ID : str2 > 
+4 --> < ID : str3 > 
+5 --> < CONST_INT : 100 > < ID : str4 > 
+6 --> < ID : str5 > < CONST_INT : 0 > 
 
 
 ScopeTable # 1
