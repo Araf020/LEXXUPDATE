@@ -19,6 +19,7 @@ using namespace std;
 
 
 int line_count=1;
+int error_count=0;
 SymbolTable sTable(7);
 string c;
 string String_literals1;
@@ -124,7 +125,12 @@ DIGIT [0-9]
 
 	}
 
-['][\\]['] {printf("sq UNFINISHED Error at line %d: %s\n",line_count,yytext);}
+['][\\]['] {
+
+			printf("sq UNFINISHED Error at line %d: %s\n",line_count,yytext);
+			fprintf(logout,"Error at line no %d: Empty character constant error %s",line_count,yytext);
+			error_count++;
+			}
 
 <END_WITH_SQ>[a-zA-Z0-9]  {
 						    string str(yytext);
@@ -136,8 +142,10 @@ DIGIT [0-9]
 <END_WITH_SQ>[\r\n]       {
 							char output[c.length()+1];
 							strcpy(output,c.c_str());
-							printf("UNFINISHED ERROR at Line: %d: %s\n",line_count, output);
+							printf("Error at line no %d: Unterminated character %s",line_count, output);
+							fprintf(logout,"\nError at line no %d: Unterminated character %s",line_count, output);
 							line_count++;
+							error_count++;
 							BEGIN INITIAL;
 
 					      }
@@ -150,7 +158,8 @@ DIGIT [0-9]
 			strcpy(output,const_character.c_str());
 			printf("<CONST_C, %s> at Line: %d\n",output,line_count);
 			fprintf(tokenout,"<CONST_CHAR, %s> ",output);
-		   
+		   	fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme %s found\n",line_count,yytext);
+
 			//fprintf(logout,"Line no %d: TOKEN <CONST_CHAR> Lexeme %s found\n",line_count,const_character);
 			BEGIN INITIAL;
 		       
@@ -159,15 +168,17 @@ DIGIT [0-9]
 <END_WITH_SQ>[\\][t]['] {
 
 	cout<<"CONST_CHAR: \t\n";
+	fprintf(logout,"Line no %d: Token <CONST_CHAR> Lexeme \t found\n",line_count);
+
 
 	BEGIN INITIAL;
 }		        
 <END_WITH_SQ>.          {
-								printf("UNFINISHED ERROR at Line: %d\n",line_count);
+								printf("UnknownError ERROR at Line: %d\n",line_count);
 
 								
-								fprintf(logout,"Line no %d: TOKEN <Error> Lexeme %s found\n",line_count,yytext);
-			
+							fprintf(logout,"Line no: %d UnknownError %s",line_count, yytext);
+							error_count++;
 								BEGIN INITIAL;
 						  
 						  }
@@ -177,9 +188,9 @@ DIGIT [0-9]
 
 
 {SQ_MULTI_CHAR}    {
-							printf("CONST_MULTI_CHAR ERROR at Line: %d: %s\n",line_count,yytext);
+							printf("\nError at line no %d: Multi character constant error %s\n",line_count,yytext);
 							//fprintf(tokenout,"<CONST_MULTI_CHAR, %s> ",yytext);
-							fprintf(logout,"Line no %d: ERROR <CONST_MULTI_CHAR> Lexeme %s found\n",line_count,yytext);
+							fprintf(logout,"\nError at line no %d: Multi character constant error %s\n",line_count,yytext);
 			//sTable.push("COsMMA",yytext);
 									BEGIN INITIAL;
 
@@ -190,7 +201,7 @@ DIGIT [0-9]
 <END_WITH_DQ>{IF_END_DQ} {
 							printf("LITERALS FOUND: <%s> \n",yytext);
 							fprintf(tokenout,"<STRING, %s> ",yytext);
-							fprintf(logout,"Line no %d: TOKEN <STRING> Lexeme %s found\n",line_count,yytext);
+							fprintf(logout,"\nLine no %d: TOKEN <STRING> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("COMMA",yytext);
 							BEGIN INITIAL;
 					     }
@@ -258,9 +269,23 @@ DIGIT [0-9]
 
 [ \t\v]+ {}
 
-{IDENTIFIER_ERROR} {printf("\n%s is an IDENTIFIER_ERROR\n",yytext);}
-{DECIMAL_POINT_ERROR} {printf("\n%s DECIMALPOINTER_ERROR\n",yytext);}
-{ILL_FORMAT_ERROR} {printf("\n%s is an ILL_FORMAT_ERROR\n",yytext);}
+{IDENTIFIER_ERROR} {printf("\n%s is an IDENTIFIER_ERROR\n",yytext);
+					fprintf(logout,"\nError at line no %d: Invalid prefix on ID or invalid suffix on Number %s",line_count,yytext);
+
+					error_count++;
+				
+					}
+{DECIMAL_POINT_ERROR} {printf("\n%s DECIMALPOINTER_ERROR\n",yytext);
+						fprintf(logout,"\nError at line no %d: Too many decimal points %s",line_count,yytext);
+						
+					}
+
+{ILL_FORMAT_ERROR} {printf("\n%s is an ILL_FORMAT_ERROR\n",yytext);
+				
+					fprintf(logout,"\nError at line no %d: Ill formed Number %s",line_count,yytext);
+
+
+				}
 
 
 
@@ -273,69 +298,69 @@ DIGIT [0-9]
 (switch) {printf(" <%s> found\n",yytext);
 		  //outputfile<<"<SWITCH> ";	
 			fprintf(tokenout,"<SWITCH> ");
-			fprintf(logout,"Line no %d: TOKEN <SWITCH> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <SWITCH> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("SWITCH",yytext);
 		  }
 (default) {printf(" <%s> found\n",yytext);  
 			//outputfile<<"<DEFAULT> ";
 			fprintf(tokenout,"<DEFAULT> ");
-			fprintf(logout,"Line no %d: TOKEN <DEFAULT> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <DEFAULT> Lexeme %s found\n",line_count,yytext);
 		
         }
 (if) {printf(" <%s> found\n",yytext);
 		//outputfile<<"<IF> "; 
 			fprintf(tokenout,"<IF> ");
-			fprintf(logout,"Line no %d: TOKEN <IF> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <IF> Lexeme %s found\n",line_count,yytext);
 		}
 (else) {printf(" <%s> found\n",yytext);
 			//	outputfile<<"<ELSE> ";
 		    fprintf(tokenout,"<ELSE> ");
-			fprintf(logout,"Line no %d: TOKEN <ELSE> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <ELSE> Lexeme %s found\n",line_count,yytext);
 			}
 (for) {printf(" <%s> found\n",yytext);
 				//outputfile<<"<FOR> ";
 		    fprintf(tokenout,"<FOR>");
-			fprintf(logout,"Line no %d: TOKEN <FOR> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"Line no %d: Token <FOR> Lexeme %s found\n",line_count,yytext);
 				}
 (do) {printf(" <%s> found\n",yytext);
 			//outputfile<<"<DO> ";
 			fprintf(tokenout,"<DO> ");
-			fprintf(logout,"Line no %d: TOKEN <DO> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <DO> Lexeme %s found\n",line_count,yytext);
 			}
 (float) {printf(" <%s> found\n",yytext);
 				//	outputfile<<"<FLOAT> ";
 			fprintf(tokenout,"<FLOAT> ");
-			fprintf(logout,"Line no %d: TOKEN <FLOAT> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: TOKEN <FLOAT> Lexeme %s found\n",line_count,yytext);
 					
 					}
 (void) {printf(" <%s> found\n",yytext);
 			SymbolTable sTable(7);
 				// outputfile<<"<VOID> ";
 			fprintf(tokenout,"<VOID> ");
-			fprintf(logout,"Line no %d: TOKEN <VOID> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <VOID> Lexeme %s found\n",line_count,yytext);
 				}
 (int) {printf(" <%s> found\n",yytext);
 		//outputfile<<"<INT> ";	
 			fprintf(tokenout,"<INT>");
-			fprintf(logout,"Line no %d: TOKEN <INT> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: TOKEN <INT> Lexeme %s found\n",line_count,yytext);
 		
 			}
 (char) {printf(" <%s> found\n",yytext);
 			//outputfile<<"<CHAR> ";
 			fprintf(tokenout,"<CHAR> ");
-			fprintf(logout,"Line no %d: TOKEN <CHAR> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: TOKEN <CHAR> Lexeme %s found\n",line_count,yytext);
 			}
 (while) {   printf("<%s> found\n",yytext);
 			//outputfile<<"<WHILE> ";
 			fprintf(tokenout,"<WHILE> ");
-			fprintf(logout,"Line no %d: TOKEN <WHILE> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: TOKEN <WHILE> Lexeme %s found\n",line_count,yytext);
 	
 		}
 (break) {
 
 			printf("<%s> found\n",yytext);
 			fprintf(tokenout,"<BREAK>");
-			fprintf(logout,"Line no %d: TOKEN <BREAK> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: TOKEN <BREAK> Lexeme %s found\n",line_count,yytext);
 	//outputfile<<"<BREAK> ";
 }
 
@@ -343,7 +368,7 @@ DIGIT [0-9]
 
 	printf("<%s> found\n",yytext);
 				fprintf(tokenout,"<DOUBLE> ");
-			fprintf(logout,"Line no %d: TOKEN <DOUBLE> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: TOKEN <DOUBLE> Lexeme %s found\n",line_count,yytext);
 	//outputfile<<"<DOUBLE> ";
 }
 
@@ -352,52 +377,52 @@ DIGIT [0-9]
 	printf("<%s> found\n",yytext);
 	//outputfile<<"<RETURN> ";
 				fprintf(tokenout,"<RETURN> ");
-			fprintf(logout,"Line no %d: TOKEN <RETURN> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <RETURN> Lexeme %s found\n",line_count,yytext);
 }
 (case) {
 
 	printf("<%s> found\n",yytext);
 	//outputfile<<"<CASE> ";
 				fprintf(tokenout,"<CASE> ");
-			fprintf(logout,"Line no %d: TOKEN <CASE> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: TOKEN <CASE> Lexeme %s found\n",line_count,yytext);
 }
 (continue) {
 
 	printf("<%s> found\n",yytext);
 				fprintf(tokenout,"<CONTINUE> ");
-			fprintf(logout,"Line no %d: TOKEN <CONTINUE> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <CONTINUE> Lexeme %s found\n",line_count,yytext);
 	//outputfile<<"<CONTINUE> ";
 }
 
 
 {TAB} {printf("TAB <\t> found\n");
 			fprintf(tokenout,"<CONST_CHAR, \t> ");
-			fprintf(logout,"Line no %d: TOKEN <CONST_CHAR> Lexeme \t found\n",line_count);
+			fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme \t found\n",line_count);
 			//sTable.push("COMMA",yytext);
 	//	outputfile<<"<COMMA, "<<yytext;
 		}
 {SPECIALS} {printf("SPECIALS <%s> found\n",yytext);
 			fprintf(tokenout,"<SPECIALS, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <SPECIALS> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <SPECIALS> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("COMMA",yytext);
 	//	outputfile<<"<COMMA, "<<yytext;
 		}
 
 {COMMA} {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<COMMA, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <COMMA> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <COMMA> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("COMMA",yytext);
 	//	outputfile<<"<COMMA, "<<yytext;
 		}
 {LTHIRD} {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<LTHIRD, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <LTHIRD> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <LTHIRD> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("LTHIRD",yytext);
 	//	outputfile<<"<LTHIRD, "<<yytext;
 	}
 {RTHIRD} {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<RTHIRD, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <RTHIRD> Lexeme %s found\n",line_count,yytext);	
+			fprintf(logout,"\nLine no %d: Token <RTHIRD> Lexeme %s found\n",line_count,yytext);	
 			//sTable.push("RTHIRD",yytext);	
 
 		//outputfile<<"<RTHIRD, "<<yytext;
@@ -406,37 +431,37 @@ DIGIT [0-9]
 
 {SEMICOLON} {printf(" <SEMICOLON, %s> found\n",yytext);
 			fprintf(tokenout,"<SEMICOLON, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <SEMICOLON> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <SEMICOLON> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("SEMICOLON",yytext);
 		
 		//outputfile<<"<SEMICOLON, "<<yytext;
 	}
 {LCURL} {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<LCURL, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <LCURL> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"Line no %d: Token <LCURL> Lexeme %s found\n",line_count,yytext);
 		
 		//outputfile<<"<LCURL, "<<yytext;
 	}
 {RCURL} {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<RCURL, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <RCURL> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <RCURL> Lexeme %s found\n",line_count,yytext);
 		
 		//outputfile<<"<LCURL, "<<yytext;
 	}
 {LPAREN} {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<LPAREN, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <LPAREN> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <LPAREN> Lexeme %s found\n",line_count,yytext);
 		
 		//outputfile<<"<LPAREN, "<<yytext;
 	}
 {RPAREN} {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<RPAREN, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <RPAREN> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <RPAREN> Lexeme %s found\n",line_count,yytext);
 		//outputfile<<"<RPAREN, "<<yytext;
 	}
 {NOT} {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<NOT, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <NOT> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <NOT> Lexeme %s found\n",line_count,yytext);
 		
 		//outputfile<<"<NOT, "<<yytext;
 	}
@@ -446,7 +471,7 @@ DIGIT [0-9]
 
 		printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<LOGICOP, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <LOGICOP> Lexeme %s found\n",line_count,yytext);		
+			fprintf(logout,"\nLine no %d: Token <LOGICOP> Lexeme %s found\n",line_count,yytext);		
 		///outputfile<<"<LOGICOP, "<<yytext;
 	}
 

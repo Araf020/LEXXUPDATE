@@ -1,1 +1,13 @@
-Line no 5: TOKEN <ID> Lexeme sdjlsadjlsa found
+
+Error at line no 1: Too many decimal points 1.2.345
+Error at line no 2: Ill formed Number 1E10.7
+Error at line no 3: Invalid prefix on ID or invalid suffix on Number 12abcd
+Error at line no 4: Multi character constant error 'ab'
+
+Error at line no 5: Unterminated character 'a
+Error at line no 6: Unterminated character '
+Error at line no 7: Multi character constant error 'ab cd'
+Error at line no 8: Empty character constant error '\'
+Line no 9: Token <CONST_CHAR> Lexeme ' found
+Line no 13: TOKEN <ID> Lexeme ijk found
+Line no 15: TOKEN <ID> Lexeme def found

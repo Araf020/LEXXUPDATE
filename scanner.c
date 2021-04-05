@@ -748,6 +748,7 @@ using namespace std;
 
 
 int line_count=1;
+int error_count=0;
 SymbolTable sTable(7);
 string c;
 string String_literals1;
@@ -759,8 +760,8 @@ string const_character;
 FILE *logout;
 FILE *tokenout;
 
-#line 763 "scanner.c"
 #line 764 "scanner.c"
+#line 765 "scanner.c"
 
 #define INITIAL 0
 #define END_WITH_SQ 1
@@ -984,10 +985,10 @@ YY_DECL
 		}
 
 	{
-#line 110 "scanner.l"
+#line 111 "scanner.l"
 
 
-#line 991 "scanner.c"
+#line 992 "scanner.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1047,12 +1048,12 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 112 "scanner.l"
+#line 113 "scanner.l"
 {line_count++;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 119 "scanner.l"
+#line 120 "scanner.l"
 {
 	
 	string str(yytext);
@@ -1063,12 +1064,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 127 "scanner.l"
-{printf("sq UNFINISHED Error at line %d: %s\n",line_count,yytext);}
+#line 128 "scanner.l"
+{
+
+			printf("sq UNFINISHED Error at line %d: %s\n",line_count,yytext);
+			fprintf(logout,"Error at line no %d: Empty character constant error %s",line_count,yytext);
+			error_count++;
+			}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 129 "scanner.l"
+#line 135 "scanner.l"
 {
 						    string str(yytext);
 						    const_character = str;
@@ -1079,19 +1085,21 @@ YY_RULE_SETUP
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 136 "scanner.l"
+#line 142 "scanner.l"
 {
 							char output[c.length()+1];
 							strcpy(output,c.c_str());
-							printf("UNFINISHED ERROR at Line: %d: %s\n",line_count, output);
+							printf("Error at line no %d: Unterminated character %s",line_count, output);
+							fprintf(logout,"\nError at line no %d: Unterminated character %s",line_count, output);
 							line_count++;
+							error_count++;
 							BEGIN INITIAL;
 
 					      }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 146 "scanner.l"
+#line 154 "scanner.l"
 {
 
 			char output[const_character.length()+1];
@@ -1099,7 +1107,8 @@ YY_RULE_SETUP
 			strcpy(output,const_character.c_str());
 			printf("<CONST_C, %s> at Line: %d\n",output,line_count);
 			fprintf(tokenout,"<CONST_CHAR, %s> ",output);
-		   
+		   	fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme %s found\n",line_count,yytext);
+
 			//fprintf(logout,"Line no %d: TOKEN <CONST_CHAR> Lexeme %s found\n",line_count,const_character);
 			BEGIN INITIAL;
 		       
@@ -1107,34 +1116,36 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 159 "scanner.l"
+#line 168 "scanner.l"
 {
 
 	cout<<"CONST_CHAR: \t\n";
+	fprintf(logout,"Line no %d: Token <CONST_CHAR> Lexeme \t found\n",line_count);
+
 
 	BEGIN INITIAL;
 }		        
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 165 "scanner.l"
+#line 176 "scanner.l"
 {
-								printf("UNFINISHED ERROR at Line: %d\n",line_count);
+								printf("UnknownError ERROR at Line: %d\n",line_count);
 
 								
-								fprintf(logout,"Line no %d: TOKEN <Error> Lexeme %s found\n",line_count,yytext);
-			
+							fprintf(logout,"Line no: %d UnknownError %s",line_count, yytext);
+							error_count++;
 								BEGIN INITIAL;
 						  
 						  }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 179 "scanner.l"
+#line 190 "scanner.l"
 {
-							printf("CONST_MULTI_CHAR ERROR at Line: %d: %s\n",line_count,yytext);
+							printf("\nError at line no %d: Multi character constant error %s\n",line_count,yytext);
 							//fprintf(tokenout,"<CONST_MULTI_CHAR, %s> ",yytext);
-							fprintf(logout,"Line no %d: ERROR <CONST_MULTI_CHAR> Lexeme %s found\n",line_count,yytext);
+							fprintf(logout,"\nError at line no %d: Multi character constant error %s\n",line_count,yytext);
 			//sTable.push("COsMMA",yytext);
 									BEGIN INITIAL;
 
@@ -1143,62 +1154,62 @@ YY_RULE_SETUP
 case 10:
 /* rule 10 can match eol */
 YY_RULE_SETUP
-#line 190 "scanner.l"
+#line 201 "scanner.l"
 {
 							printf("LITERALS FOUND: <%s> \n",yytext);
 							fprintf(tokenout,"<STRING, %s> ",yytext);
-							fprintf(logout,"Line no %d: TOKEN <STRING> Lexeme %s found\n",line_count,yytext);
+							fprintf(logout,"\nLine no %d: TOKEN <STRING> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("COMMA",yytext);
 							BEGIN INITIAL;
 					     }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 198 "scanner.l"
+#line 209 "scanner.l"
 {printf("DQ NOT finished"); BEGIN INITIAL;}
 	YY_BREAK
 case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
-#line 206 "scanner.l"
+#line 217 "scanner.l"
 {printf("we r here\n");line_count++;line_count++; BEGIN INITIAL;}
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 207 "scanner.l"
+#line 218 "scanner.l"
 {printf("we r here\n");line_count++; BEGIN INITIAL;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 208 "scanner.l"
+#line 219 "scanner.l"
 {}
 	YY_BREAK
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 211 "scanner.l"
+#line 222 "scanner.l"
 {printf("we r multi\n");line_count++;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 212 "scanner.l"
+#line 223 "scanner.l"
 {printf("i m visited\n");BEGIN INITIAL;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 213 "scanner.l"
+#line 224 "scanner.l"
 {printf("not finished\n"); BEGIN DUMMY;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 215 "scanner.l"
+#line 226 "scanner.l"
 {printf("i m in DUMMY\n"); BEGIN INITIAL;}
 	YY_BREAK
 case 19:
 /* rule 19 can match eol */
 YY_RULE_SETUP
-#line 222 "scanner.l"
+#line 233 "scanner.l"
 {
 
 	printf("NO ACTION\n %s\n",yytext);
@@ -1219,7 +1230,7 @@ YY_RULE_SETUP
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 238 "scanner.l"
+#line 250 "scanner.l"
 {
 					string str(yytext);
 					char out[str.length()];
@@ -1240,94 +1251,107 @@ YY_RULE_SETUP
 case 21:
 /* rule 21 can match eol */
 YY_RULE_SETUP
-#line 255 "scanner.l"
+#line 267 "scanner.l"
 {printf("kas\n");line_count+=2;}
 	YY_BREAK
 case 22:
 /* rule 22 can match eol */
 YY_RULE_SETUP
-#line 256 "scanner.l"
+#line 268 "scanner.l"
 {printf("single\n");line_count++;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 258 "scanner.l"
+#line 270 "scanner.l"
 {}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 260 "scanner.l"
-{printf("\n%s is an IDENTIFIER_ERROR\n",yytext);}
+#line 272 "scanner.l"
+{printf("\n%s is an IDENTIFIER_ERROR\n",yytext);
+					fprintf(logout,"\nError at line no %d: Invalid prefix on ID or invalid suffix on Number %s",line_count,yytext);
+
+					error_count++;
+				
+					}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 261 "scanner.l"
-{printf("\n%s DECIMALPOINTER_ERROR\n",yytext);}
+#line 278 "scanner.l"
+{printf("\n%s DECIMALPOINTER_ERROR\n",yytext);
+						fprintf(logout,"\nError at line no %d: Too many decimal points %s",line_count,yytext);
+						
+					}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 262 "scanner.l"
-{printf("\n%s is an ILL_FORMAT_ERROR\n",yytext);}
+#line 283 "scanner.l"
+{printf("\n%s is an ILL_FORMAT_ERROR\n",yytext);
+				
+					fprintf(logout,"\nError at line no %d: Ill formed Number %s",line_count,yytext);
+
+
+				}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 272 "scanner.l"
+#line 298 "scanner.l"
 {printf(" <%s> found\n",yytext);
 		  //outputfile<<"<SWITCH> ";	
 			fprintf(tokenout,"<SWITCH> ");
-			fprintf(logout,"Line no %d: TOKEN <SWITCH> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <SWITCH> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("SWITCH",yytext);
 		  }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 278 "scanner.l"
+#line 304 "scanner.l"
 {printf(" <%s> found\n",yytext);  
 			//outputfile<<"<DEFAULT> ";
 			fprintf(tokenout,"<DEFAULT> ");
-			fprintf(logout,"Line no %d: TOKEN <DEFAULT> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <DEFAULT> Lexeme %s found\n",line_count,yytext);
 		
         }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 284 "scanner.l"
+#line 310 "scanner.l"
 {printf(" <%s> found\n",yytext);
 		//outputfile<<"<IF> "; 
 			fprintf(tokenout,"<IF> ");
-			fprintf(logout,"Line no %d: TOKEN <IF> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <IF> Lexeme %s found\n",line_count,yytext);
 		}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 289 "scanner.l"
+#line 315 "scanner.l"
 {printf(" <%s> found\n",yytext);
 			//	outputfile<<"<ELSE> ";
 		    fprintf(tokenout,"<ELSE> ");
-			fprintf(logout,"Line no %d: TOKEN <ELSE> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <ELSE> Lexeme %s found\n",line_count,yytext);
 			}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 294 "scanner.l"
+#line 320 "scanner.l"
 {printf(" <%s> found\n",yytext);
 				//outputfile<<"<FOR> ";
 		    fprintf(tokenout,"<FOR>");
-			fprintf(logout,"Line no %d: TOKEN <FOR> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"Line no %d: Token <FOR> Lexeme %s found\n",line_count,yytext);
 				}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 299 "scanner.l"
+#line 325 "scanner.l"
 {printf(" <%s> found\n",yytext);
 			//outputfile<<"<DO> ";
 			fprintf(tokenout,"<DO> ");
-			fprintf(logout,"Line no %d: TOKEN <DO> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"Line no %d: Token <DO> Lexeme %s found\n",line_count,yytext);
 			}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 304 "scanner.l"
+#line 330 "scanner.l"
 {printf(" <%s> found\n",yytext);
 				//	outputfile<<"<FLOAT> ";
 			fprintf(tokenout,"<FLOAT> ");
@@ -1337,17 +1361,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 310 "scanner.l"
+#line 336 "scanner.l"
 {printf(" <%s> found\n",yytext);
 			SymbolTable sTable(7);
 				// outputfile<<"<VOID> ";
 			fprintf(tokenout,"<VOID> ");
-			fprintf(logout,"Line no %d: TOKEN <VOID> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"Line no %d: Token <VOID> Lexeme %s found\n",line_count,yytext);
 				}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 316 "scanner.l"
+#line 342 "scanner.l"
 {printf(" <%s> found\n",yytext);
 		//outputfile<<"<INT> ";	
 			fprintf(tokenout,"<INT>");
@@ -1357,7 +1381,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 322 "scanner.l"
+#line 348 "scanner.l"
 {printf(" <%s> found\n",yytext);
 			//outputfile<<"<CHAR> ";
 			fprintf(tokenout,"<CHAR> ");
@@ -1366,7 +1390,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 327 "scanner.l"
+#line 353 "scanner.l"
 {   printf("<%s> found\n",yytext);
 			//outputfile<<"<WHILE> ";
 			fprintf(tokenout,"<WHILE> ");
@@ -1376,7 +1400,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 333 "scanner.l"
+#line 359 "scanner.l"
 {
 
 			printf("<%s> found\n",yytext);
@@ -1387,7 +1411,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 341 "scanner.l"
+#line 367 "scanner.l"
 {
 
 	printf("<%s> found\n",yytext);
@@ -1398,83 +1422,83 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 349 "scanner.l"
+#line 375 "scanner.l"
 {
 
 	printf("<%s> found\n",yytext);
 	//outputfile<<"<RETURN> ";
 				fprintf(tokenout,"<RETURN> ");
-			fprintf(logout,"Line no %d: TOKEN <RETURN> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <RETURN> Lexeme %s found\n",line_count,yytext);
 }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 356 "scanner.l"
+#line 382 "scanner.l"
 {
 
 	printf("<%s> found\n",yytext);
 	//outputfile<<"<CASE> ";
 				fprintf(tokenout,"<CASE> ");
-			fprintf(logout,"Line no %d: TOKEN <CASE> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: TOKEN <CASE> Lexeme %s found\n",line_count,yytext);
 }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 363 "scanner.l"
+#line 389 "scanner.l"
 {
 
 	printf("<%s> found\n",yytext);
 				fprintf(tokenout,"<CONTINUE> ");
-			fprintf(logout,"Line no %d: TOKEN <CONTINUE> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <CONTINUE> Lexeme %s found\n",line_count,yytext);
 	//outputfile<<"<CONTINUE> ";
 }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 372 "scanner.l"
+#line 398 "scanner.l"
 {printf("TAB <\t> found\n");
 			fprintf(tokenout,"<CONST_CHAR, \t> ");
-			fprintf(logout,"Line no %d: TOKEN <CONST_CHAR> Lexeme \t found\n",line_count);
+			fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme \t found\n",line_count);
 			//sTable.push("COMMA",yytext);
 	//	outputfile<<"<COMMA, "<<yytext;
 		}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 378 "scanner.l"
+#line 404 "scanner.l"
 {printf("SPECIALS <%s> found\n",yytext);
 			fprintf(tokenout,"<SPECIALS, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <SPECIALS> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <SPECIALS> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("COMMA",yytext);
 	//	outputfile<<"<COMMA, "<<yytext;
 		}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 385 "scanner.l"
+#line 411 "scanner.l"
 {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<COMMA, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <COMMA> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <COMMA> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("COMMA",yytext);
 	//	outputfile<<"<COMMA, "<<yytext;
 		}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 391 "scanner.l"
+#line 417 "scanner.l"
 {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<LTHIRD, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <LTHIRD> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <LTHIRD> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("LTHIRD",yytext);
 	//	outputfile<<"<LTHIRD, "<<yytext;
 	}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 397 "scanner.l"
+#line 423 "scanner.l"
 {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<RTHIRD, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <RTHIRD> Lexeme %s found\n",line_count,yytext);	
+			fprintf(logout,"\nLine no %d: TOKEN <RTHIRD> Lexeme %s found\n",line_count,yytext);	
 			//sTable.push("RTHIRD",yytext);	
 
 		//outputfile<<"<RTHIRD, "<<yytext;
@@ -1482,10 +1506,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 406 "scanner.l"
+#line 432 "scanner.l"
 {printf(" <SEMICOLON, %s> found\n",yytext);
 			fprintf(tokenout,"<SEMICOLON, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <SEMICOLON> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: TOKEN <SEMICOLON> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("SEMICOLON",yytext);
 		
 		//outputfile<<"<SEMICOLON, "<<yytext;
@@ -1493,7 +1517,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 413 "scanner.l"
+#line 439 "scanner.l"
 {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<LCURL, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <LCURL> Lexeme %s found\n",line_count,yytext);
@@ -1503,7 +1527,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 419 "scanner.l"
+#line 445 "scanner.l"
 {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<RCURL, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <RCURL> Lexeme %s found\n",line_count,yytext);
@@ -1513,7 +1537,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 425 "scanner.l"
+#line 451 "scanner.l"
 {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<LPAREN, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <LPAREN> Lexeme %s found\n",line_count,yytext);
@@ -1523,7 +1547,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 431 "scanner.l"
+#line 457 "scanner.l"
 {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<RPAREN, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <RPAREN> Lexeme %s found\n",line_count,yytext);
@@ -1532,7 +1556,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 436 "scanner.l"
+#line 462 "scanner.l"
 {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<NOT, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <NOT> Lexeme %s found\n",line_count,yytext);
@@ -1542,7 +1566,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 444 "scanner.l"
+#line 470 "scanner.l"
 {
 
 		printf(" <%s> found\n",yytext);
@@ -1554,7 +1578,7 @@ YY_RULE_SETUP
 case 55:
 /* rule 55 can match eol */
 YY_RULE_SETUP
-#line 455 "scanner.l"
+#line 481 "scanner.l"
 {
 
 					printf("<STRING , %s>\n",yytext);
@@ -1640,18 +1664,18 @@ YY_RULE_SETUP
 case 56:
 /* rule 56 can match eol */
 YY_RULE_SETUP
-#line 536 "scanner.l"
+#line 562 "scanner.l"
 {printf("literlas not finished, %s\n",yytext);line_count+=2;}
 	YY_BREAK
 case 57:
 /* rule 57 can match eol */
 YY_RULE_SETUP
-#line 537 "scanner.l"
+#line 563 "scanner.l"
 {printf("UNFINISHED literlas: %s\n",yytext); line_count++;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 539 "scanner.l"
+#line 565 "scanner.l"
 {printf("%s CONST_INT\n",yytext);
 			fprintf(tokenout,"<CONST_INT, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <INT> Lexeme %s found\n",line_count,yytext);
@@ -1659,7 +1683,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 544 "scanner.l"
+#line 570 "scanner.l"
 {printf("%s CONST_FLOAT\n",yytext);
 			fprintf(tokenout,"<CONST_FLOAT, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <CONST_FLOAT> Lexeme %s found\n",line_count,yytext);
@@ -1667,7 +1691,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 549 "scanner.l"
+#line 575 "scanner.l"
 {printf("ASSIGNOP <%s> found\n",yytext);
 			fprintf(tokenout,"<ASSIGNOP, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <ASSIGNOP> Lexeme %s found\n",line_count,yytext);
@@ -1677,7 +1701,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 557 "scanner.l"
+#line 583 "scanner.l"
 {printf("IDENTIFIER <%s> found\n",yytext);
 			fprintf(tokenout,"<ID, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <ID> Lexeme %s found\n",line_count,yytext);
@@ -1687,7 +1711,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 569 "scanner.l"
+#line 595 "scanner.l"
 {printf("<%s, MULOP>\n",yytext);
 			fprintf(tokenout,"<MULOP, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <MULOP> Lexeme %s found\n",line_count,yytext);
@@ -1695,7 +1719,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 573 "scanner.l"
+#line 599 "scanner.l"
 {printf("<%s, ADDOP>\n",yytext);
 			fprintf(tokenout,"<ADDOP, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <ADDOP> Lexeme %s found\n",line_count,yytext);
@@ -1703,7 +1727,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 578 "scanner.l"
+#line 604 "scanner.l"
 {printf("<%s incop>\n",yytext);
 			fprintf(tokenout,"<INCOP, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <INCOP> Lexeme %s found\n",line_count,yytext);
@@ -1711,7 +1735,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 582 "scanner.l"
+#line 608 "scanner.l"
 {printf("%s RELOP\n",yytext);
 			fprintf(tokenout,"<RELOP, %s> ",yytext);
 			fprintf(logout,"Line no %d: TOKEN <RELOP> Lexeme %s found\n",line_count,yytext);
@@ -1725,20 +1749,20 @@ case YY_STATE_EOF(SLINECOMMENT):
 case YY_STATE_EOF(MULTILINECOMMENT):
 case YY_STATE_EOF(MSCOMMENT):
 case YY_STATE_EOF(DUMMY):
-#line 589 "scanner.l"
+#line 615 "scanner.l"
 {printf("Total Line Number: %d \n",line_count); return 0;}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 590 "scanner.l"
+#line 616 "scanner.l"
 {}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 592 "scanner.l"
+#line 618 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1742 "scanner.c"
+#line 1766 "scanner.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2741,7 +2765,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 592 "scanner.l"
+#line 618 "scanner.l"
 
 
 
