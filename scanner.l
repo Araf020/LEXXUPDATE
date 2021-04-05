@@ -45,7 +45,7 @@ DECIMAL_POINT_ERROR ([0-9]*[.][0-9]*[.]+[0-9]*)+
 ILL_FORMAT_ERROR ([0-9]*\.?[0-9]+[.]?)*[eE][-+]?[0-9]+[.][0-9]*
 
 
-SPECIALS ['][\\][a-z]+[']
+SPECIALS ['][\\]?[a-z]+[']
 TAB ['][\\][t][']
 
 CONST_c ['][a-zA-Z][']
@@ -160,12 +160,14 @@ DIGIT [0-9]
 
 <END_WITH_SQ>['] {
 
+			string str(yytext);
+			c= c+str;
 			char output[const_character.length()+1];
-
 			strcpy(output,const_character.c_str());
+
 			printf("<CONST_C, %s> at Line: %d\n",output,line_count);
 			fprintf(tokenout,"<CONST_CHAR, %s> ",output);
-		   	fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme %s found\n",line_count,yytext);
+		   	fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme %s found --> <CHAR_CONST, %c> \n",line_count,output,output[1]);
 		   	string temp(output);
 			SymbolInfo sym("CONST_CHAR",temp);
 			sTable->push(sym,logout);
@@ -177,7 +179,7 @@ DIGIT [0-9]
 <END_WITH_SQ>[\\][t]['] {
 
 	cout<<"CONST_CHAR: \t\n";
-	fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme \t found\n",line_count);
+	fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme %s found --> <CHAR_CONST, \t> ",line_count,yytext);
 	string temp(yytext);
 			SymbolInfo sym("CONST_CHAR",temp);
 			sTable->push(sym,logout);
@@ -284,6 +286,7 @@ DIGIT [0-9]
 				}
 
 [/][/](.*)[\\][\r\n](.+)[\r\n] {printf("single\n");line_count+=2;}
+
 "//"(.*)[\r\n] {printf("single\n");line_count++;}
 
 [ \t\v]+ {}
@@ -418,7 +421,7 @@ DIGIT [0-9]
 {TAB} {printf("TAB <\t> found\n");
 			fprintf(tokenout,"<CONST_CHAR, \t> ");
 			
-			fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme \t found\n",line_count);
+			fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme %s found --> <CHAR_CONST, \t>\n",line_count,yytext);
 			string temp(yytext);
 			SymbolInfo sym("CONST_CHAR",temp);
 			sTable->push(sym,logout);
@@ -428,7 +431,7 @@ DIGIT [0-9]
 		}
 {SPECIALS} {printf("SPECIALS <%s> found\n",yytext);
 			fprintf(tokenout,"<CONST_CHAR, %s> ",yytext);
-			fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme %s found --> <CHAR_CONST, %c>\n",line_count,yytext, yytext[1]);
 			
 			string temp(yytext);
 			SymbolInfo sym("CONST_CHAR",temp);
@@ -508,7 +511,7 @@ DIGIT [0-9]
 
 
 
-{LITERALS} {
+{STRINGLITERALS} 	{
 
 					printf("<STRING , %s>\n",yytext);
 					string str(yytext);
@@ -590,21 +593,12 @@ DIGIT [0-9]
 					
 
 				}
-[\"](.*)[\\][\r\n](.*)[\r\n] {
 
-								printf("literlas not finished, %s",yytext);
-								fprintf(logout,"\nError at line no %d: Unterminated String %s",line_count,yytext);
-								line_count+=2;
-								error_count++;
 
-								}
-[\"](.*)[\r\n] {
-			printf("UNFINISHED literlas: %s\n",yytext); 
-			fprintf(logout,"\nError at line no %d: Unterminated String %s",line_count,yytext);
-			line_count++;
-			error_count++;
-
+{STRINGERROR} {		
+		fprintf(logout,"\nError at line no %d: Unterminated String %s",line_count,yytext);
 				}
+
 
 
 {CONST_INT} {printf("%s CONST_INT\n",yytext);
