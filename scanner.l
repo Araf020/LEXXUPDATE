@@ -115,11 +115,6 @@ DIGIT [0-9]
 
 
 
-["] {BEGIN STRING_LIT;}
-<STRING_LIT>(.*)[\\] {}
-<STRING_LIT>[\\][n] {} 
-
-
 
 ['] {
 	
@@ -240,7 +235,8 @@ DIGIT [0-9]
 
 
 }
-[/][\*]+(.*)[\r\n] {
+
+[/][\*]+(.*)[\r\n]?((.*)[\r\n])* {
 					string str(yytext);
 					char out[str.length()];
 					strcpy(out,str.c_str());
@@ -248,7 +244,13 @@ DIGIT [0-9]
 						printf("comment not finished Error! at line:%d \n",line_count);
 
 					}
-					line_count++;
+					for (int i=0;i<str.length() ;i++ ) {
+						
+						if (out[i]=='\n'|| out[i]=='\r') {
+							line_count++;
+						}
+							
+				   }
 				}
 
 [/][/](.*)[\\][\r\n](.+)[\r\n] {printf("kas\n");line_count+=2;}
@@ -451,7 +453,7 @@ DIGIT [0-9]
 
 
 
-{LITERALS} {
+{STRINGLITERALS} {
 
 					printf("<STRING , %s>\n",yytext);
 					string str(yytext);
@@ -532,7 +534,8 @@ DIGIT [0-9]
 					
 
 				}
-
+[\"](.*)[\\][\r\n](.*)[\r\n] {printf("literlas not finished, %s\n",yytext);line_count+=2;}
+[\"](.*)[\r\n] {printf("UNFINISHED literlas: %s\n",yytext); line_count++;}
 
 {CONST_INT} {printf("%s CONST_INT\n",yytext);
 			fprintf(tokenout,"<CONST_INT, %s> ",yytext);
