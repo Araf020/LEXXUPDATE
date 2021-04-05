@@ -1,44 +1,70 @@
 
-Error at line no 1: Too many decimal points 1.2.345
+Line no 1: TOKEN <INT> Lexeme int found
 
-Error at line no 2: Ill formed Number 1E10.7
+Line no 1: Token <ID> Lexeme main found
 
-Error at line no 3: Invalid prefix on ID or invalid suffix on Number 12abcd
-
-Error at line no 4: Multi character constant error 'ab'
-
-Error at line no 5: Unterminated character 'a
-
-Error at line no 6: Unterminated character '
-
-Error at line no 7: Multi character constant error 'ab cd'
-
-Error at line no 8: Unterminated character '\'
-
-Line no 9: Token <CONST_CHAR> Lexeme '\f' found
-
-Error at line no 10: Empty character constant error ''
-
-Error at line no 11: Unterminated String "abcd
-
-Error at line no 12: Unterminated String "abcd\
-efgh
-
-Line no 14: Token <ID> Lexeme ijk found
 ScopeTable # 1
- -->
- -->
- -->
- -->
- -->
- -->
- --><dkas : dska
+1 --><main : ID> 
+
+Line no 1: Token <LPAREN> Lexeme ( found
+
+Line no 1: Token <RPAREN> Lexeme ) found
+
+Line no 1: Token <LCURL> Lexeme { found
+
+Line no 2: TOKEN <INT> Lexeme int found
+
+Line no 2: Token <ID> Lexeme a found
+
+ScopeTable # 1.1
+6 --><a : ID> 
+
+ScopeTable # 1
+1 --><main : ID> 
+
+Line no 2: Token <COMMA> Lexeme , found
+
+Line no 2: Token <ID> Lexeme b found
+
+ScopeTable # 1.1
+0 --><b : ID> 
+6 --><a : ID> 
+
+ScopeTable # 1
+1 --><main : ID> 
+
+Line no 2: Token <SEMICOLON> Lexeme ; found
+
+Line no 3: Token <ID> Lexeme a found
+
+a already exists in current ScopeTable
 
 
-Error at line no 14: Unterminated String "
 
-Error at line no 15: Unterminated Comment /**abc
-....
+Line no 3: Token <ASSIGNOP> Lexeme = found
 
-Total lines: 16
-Total errors: 13
+Line no 3: Token <ID> Lexeme a found
+
+a already exists in current ScopeTable
+
+
+Line no 3: TOKEN <ADDOP> Lexeme + found
+
+Line no 3: Token <INT> Lexeme 1 found
+
+ScopeTable # 1.1
+0 --><b : ID> <1 : CONST_INT> 
+6 --><a : ID> 
+
+ScopeTable # 1
+1 --><main : ID> 
+
+Line no 3: Token <SEMICOLON> Lexeme ; found
+
+Line no 5: Token <RCURL> Lexeme } found
+
+ScopeTable # 1
+1 --><main : ID> 
+
+Total lines: 5
+Total errors: 0

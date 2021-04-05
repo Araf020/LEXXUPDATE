@@ -166,7 +166,9 @@ DIGIT [0-9]
 			printf("<CONST_C, %s> at Line: %d\n",output,line_count);
 			fprintf(tokenout,"<CONST_CHAR, %s> ",output);
 		   	fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme %s found\n",line_count,yytext);
-
+		   	string temp(output);
+			SymbolInfo sym("CONST_CHAR",temp);
+			sTable->push(sym,logout);
 			//fprintf(logout,"Line no %d: TOKEN <CONST_CHAR> Lexeme %s found\n",line_count,const_character);
 			BEGIN INITIAL;
 		       
@@ -176,6 +178,9 @@ DIGIT [0-9]
 
 	cout<<"CONST_CHAR: \t\n";
 	fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme \t found\n",line_count);
+	string temp(yytext);
+			SymbolInfo sym("CONST_CHAR",temp);
+			sTable->push(sym,logout);
 
 
 	BEGIN INITIAL;
@@ -255,7 +260,7 @@ DIGIT [0-9]
 
 }
 
-[/][\*]+(.*)[\r\n]?((.*)[\r\n])* {
+[/][\*]+(.*)[\r\n]? {
 					string str(yytext);
 					char out[str.length()];
 					strcpy(out,str.c_str());
@@ -275,7 +280,7 @@ DIGIT [0-9]
 					 printf("Total errors: %d \n",error_count);
 					 fprintf(logout,"\nTotal lines: %d\n",line_count);
 					 fprintf(logout,"Total errors: %d",error_count);
-				     return 0;
+				     
 				}
 
 [/][/](.*)[\\][\r\n](.+)[\r\n] {printf("single\n");line_count+=2;}
@@ -412,13 +417,22 @@ DIGIT [0-9]
 
 {TAB} {printf("TAB <\t> found\n");
 			fprintf(tokenout,"<CONST_CHAR, \t> ");
+			
 			fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme \t found\n",line_count);
+			string temp(yytext);
+			SymbolInfo sym("CONST_CHAR",temp);
+			sTable->push(sym,logout);
+			
 			//sTable.push("COMMA",yytext);
 	//	outputfile<<"<COMMA, "<<yytext;
 		}
 {SPECIALS} {printf("SPECIALS <%s> found\n",yytext);
 			fprintf(tokenout,"<CONST_CHAR, %s> ",yytext);
 			fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme %s found\n",line_count,yytext);
+			
+			string temp(yytext);
+			SymbolInfo sym("CONST_CHAR",temp);
+			sTable->push(sym,logout);
 			//sTable.push("COMMA",yytext);
 	//	outputfile<<"<COMMA, "<<yytext;
 		}
@@ -452,15 +466,16 @@ DIGIT [0-9]
 		//outputfile<<"<SEMICOLON, "<<yytext;
 	}
 {LCURL} {printf(" <%s> found\n",yytext);
+			sTable->EnterScope();
 			fprintf(tokenout,"<LCURL, %s> ",yytext);
-			fprintf(logout,"Line no %d: Token <LCURL> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <LCURL> Lexeme %s found\n",line_count,yytext);
 		
 		//outputfile<<"<LCURL, "<<yytext;
 	}
 {RCURL} {printf(" <%s> found\n",yytext);
 			fprintf(tokenout,"<RCURL, %s> ",yytext);
 			fprintf(logout,"\nLine no %d: Token <RCURL> Lexeme %s found\n",line_count,yytext);
-		
+		sTable->pop();
 		//outputfile<<"<LCURL, "<<yytext;
 	}
 {LPAREN} {printf(" <%s> found\n",yytext);
@@ -493,7 +508,7 @@ DIGIT [0-9]
 
 
 
-{STRINGLITERALS} {
+{LITERALS} {
 
 					printf("<STRING , %s>\n",yytext);
 					string str(yytext);
@@ -595,11 +610,17 @@ DIGIT [0-9]
 {CONST_INT} {printf("%s CONST_INT\n",yytext);
 			fprintf(tokenout,"<CONST_INT, %s> ",yytext);
 			fprintf(logout,"\nLine no %d: Token <INT> Lexeme %s found\n",line_count,yytext);
+			string temp(yytext);
+			SymbolInfo sym("CONST_INT",temp);
+			sTable->push(sym,logout);
 			}
 
 {CONST_FLOAT} {printf("%s CONST_FLOAT\n",yytext);
 			fprintf(tokenout,"<CONST_FLOAT, %s> ",yytext);
 			fprintf(logout,"\nLine no %d: Token <CONST_FLOAT> Lexeme %s found\n",line_count,yytext);
+			string temp(yytext);
+			SymbolInfo sym("CONST_FLOAT",temp);
+			sTable->push(sym,logout);
 			}
 
 {ASSIGNOP} {printf("ASSIGNOP <%s> found\n",yytext);
@@ -615,11 +636,10 @@ DIGIT [0-9]
 			printf("IDENTIFIER <%s> found\n",yytext);
 			fprintf(tokenout,"<ID, %s> ",yytext);
 			fprintf(logout,"\nLine no %d: Token <ID> Lexeme %s found\n",line_count,yytext);
-			
-			SymbolInfo sy("dkas","dska");
+			string temp(yytext);
+			SymbolInfo sy("ID",temp);
 
-			sTable->push(sy);
-			sTable->printAllScopeTable(logout);
+			sTable->push(sy,logout);
 		
 		//outputfile<<"<ID, "<<yytext;
 	}
@@ -649,7 +669,11 @@ DIGIT [0-9]
 
 
 
-<<EOF>> {printf("Total Line Number: %d \n",line_count);
+<<EOF>> {
+
+		sTable->printAllScopeTable(logout);
+
+		printf("Total Line Number: %d \n",line_count);
 		
 		printf("Total errors: %d \n",error_count);
 		 fprintf(logout,"\nTotal lines: %d\n",line_count);

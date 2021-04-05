@@ -1,16 +1,5 @@
-1.2.345
-1E10.7
-12abcd
-'ab'
-'a
-'
-'ab cd'
-'\'
-'\f'
-''
-"abcd
-"abcd\
-efgh
-ijk"
-/**abc
-def
+int main(){
+	int a,b;
+	a=a+1;
+	
+}	

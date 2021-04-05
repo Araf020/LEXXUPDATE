@@ -1,1 +1,1 @@
-<CONST_CHAR, '\f'> <ID, ijk> 
+<INT><ID, main> <LPAREN, (> <RPAREN, )> <LCURL, {> <INT><ID, a> <COMMA, ,> <ID, b> <SEMICOLON, ;> <ID, a> <ASSIGNOP, => <ID, a> <ADDOP, +> <CONST_INT, 1> <SEMICOLON, ;> <RCURL, }> 

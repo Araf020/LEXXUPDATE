@@ -142,6 +142,7 @@ public:
 
 void scopeTable::Insert(SymbolInfo data)
 {
+
     count++;
     if (count > size)
     {
@@ -158,7 +159,7 @@ void scopeTable::Insert(SymbolInfo data)
 
     }
 
-    int index = hashFunction(data.key); // get index of slot
+    int index = hashFunction(data.getValue()); // get index of slot
     SymbolInfo *newNode = new SymbolInfo(data);     // create new node to store data
 
     // push_front()
@@ -249,13 +250,17 @@ bool scopeTable::Delete(string key)
 ///searching...........
 SymbolInfo* scopeTable::Search(string key)
 {
-    int index = hashFunction(key);                               /// get index of slot
+   
+    int index = hashFunction(key);
+  
+                                   /// get index of slot
     SymbolInfo *current = table[index];
 
     while (current != nullptr)
     { // traversal in list
        // cout<<"searching..."<<endl;
-        if (current->key == key){
+        if (current->getValue() == key){
+         
             return current;
         }
         current = current->next;
@@ -361,18 +366,24 @@ void scopeTable::displayTable(FILE *logout)
     char out[scopeTable_id.length()];
     strcpy(out,scopeTable_id.c_str());
     outputfile<<"ScopeTable # "<<this->scopeTable_id<<endl;
-    fprintf(logout, "ScopeTable # %s\n",out);
+    fprintf(logout, "\nScopeTable # %s\n",out);
 
 
     for (int i = 0; i < size; i++)
     { // visit every node in table
         
+        
+        SymbolInfo *current = table[i];
+        if (current==nullptr)
+        {
+            continue;
+        }
         cout <<i << " --> ";
         outputfile <<i << " --> ";
-        fprintf(logout, " -->" );
-        SymbolInfo *current = table[i];
+        fprintf(logout, "%d -->",i );
         while (current != nullptr)
         {   
+
             char out1[current->key.length()];
             strcpy(out1,current->key.c_str());
             char out2[current->value.length()];
@@ -380,7 +391,11 @@ void scopeTable::displayTable(FILE *logout)
 
             cout << "<" << current->key << " : " << current->value << " > ";
             outputfile << "<" << current->key << " : " << current->value << " > ";
-            fprintf(logout, "<%s : %s> ",out1,out2);
+            
+                /* code */
+                fprintf(logout, "<%s : %s> ",out2,out1);
+            
+            
             current = current->next;
         }
 
@@ -391,7 +406,7 @@ void scopeTable::displayTable(FILE *logout)
     }
     cout << endl;
     outputfile<<"\n";
-    fprintf(logout, "\n");
+   // fprintf(logout, "\n");
 }
 
 
@@ -423,7 +438,7 @@ public:
 
     }
 
-    bool push(SymbolInfo symbol);
+    bool push(SymbolInfo symbol, FILE* logout);
 
     bool pop();
 
@@ -438,13 +453,28 @@ public:
 };
 
 
-bool SymbolTable::push(SymbolInfo sym) {
+bool SymbolTable::push(SymbolInfo sym,FILE* logout) {
    
+    if (top->Search(sym.getValue()) != nullptr)
+    {
+        cout<<"exists1: "<<sym.getValue()<<endl;
+       char temp[sym.getValue().length()];
+        strcpy(temp,sym.getValue().c_str());
+        fprintf(logout, "\n%s already exists in current ScopeTable\n\n\n", temp);
+        return false;
+
+    }
+        
+    cout<<"exists2: "<<sym.getValue()<<endl;
     top->Insert(sym);
+
     top->next = nullptr;
+    this->printAllScopeTable(logout);
     insertCounter++;
     
     return true;
+    
+    
 
 }
 
