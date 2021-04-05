@@ -6,6 +6,7 @@
 %x SLINECOMMENT
 %x MULTILINECOMMENT
 %x MSCOMMENT
+%x DUMMY
 
 %{
 #include<stdio.h>
@@ -95,11 +96,11 @@ SQ_MULTI_CHAR ['][a-zA-Z](.+)[']
 
 
 
-SKIP1 [\/][\/]+(.*)[\\][\r\n](.*)[\r\n]
+SKIP1 [/][/](.*)[\\][\r\n](.*)[\r\n]
 
 SKIP [\/][\/](.*)[\r\n]
 
-SKIP2 ([/][\*]([^*]|[\r\n]|(\*([^/]|[\r\n])))*[\*][/\\])|[/][/]+(.*)[\\]?[\r\n][\w+]?[\r\n]?
+SKIP2 ([/][\*]([^*]|[\r\n]|(\*([^/]|[\r\n])))*[\*][/\\])|[/][/]+(.*)[\r\n]
 
 WHITESPACE [ \t\f\r\v]+ 
 LETTER [a-zA-Z]
@@ -107,7 +108,12 @@ DIGIT [0-9]
 
 
 %%
+
 {NEWLINE} {line_count++;}
+
+
+
+
 
 ["] {BEGIN STRING_LIT;}
 <STRING_LIT>(.*)[\\] {}
@@ -201,26 +207,26 @@ DIGIT [0-9]
 
 
 
-<SLINECOMMENT>[\\][\r\n](.*)[\r\n]  {line_count++;line_count++; BEGIN INITIAL;}
-<SLINECOMMENT>(.*)[\r\n]            {line_count++; BEGIN INITIAL;}
-<MULTILINECOMMENT>(.*) {}
-<MULTILINECOMMENT>[\r\n] 		{line_count++;}
-<MULTILINECOMMENT>[\*]+[/]   		{BEGIN INITIAL;}
+
+<SLINECOMMENT>[\\][\r\n](.*)[\r\n]  {printf("we r here\n");line_count++;line_count++; BEGIN INITIAL;}
+<SLINECOMMENT>[\r\n]            {printf("we r here\n");line_count++; BEGIN INITIAL;}
+<SLINECOMMENT>(.*) {}
 
 
-	
+<MULTILINECOMMENT>(.*)[\r\n] 		{printf("we r multi\n");line_count++;}
+<MULTILINECOMMENT>[\*]+[/]  		{printf("i m visited\n");BEGIN INITIAL;}
+<MULTILINECOMMENT>. {printf("not finished\n"); BEGIN DUMMY;}
+
+<DUMMY>(.*) {printf("i m in DUMMY\n"); BEGIN INITIAL;}
 
 
 
-[ \t\v]+ {}
 
-{IDENTIFIER_ERROR} {printf("\n%s is an IDENTIFIER_ERROR\n",yytext);}
-{DECIMAL_POINT_ERROR} {printf("\n%s DECIMALPOINTER_ERROR\n",yytext);}
-{ILL_FORMAT_ERROR} {printf("\n%s is an ILL_FORMAT_ERROR\n",yytext);}
+
 
 {SKIP2} {
 
-	printf("NO ACTION\n");
+	printf("NO ACTION\n %s\n",yytext);
 	string str(yytext);
 	char str1[str.length()];
 
@@ -234,9 +240,31 @@ DIGIT [0-9]
 
 
 }
+[/][\*]+(.*)[\r\n] {
+					string str(yytext);
+					char out[str.length()];
+					strcpy(out,str.c_str());
+					if(out[str.length()-1] != '/' && out[str.length()-2] != '*'){
+						printf("comment not finished Error! at line:%d \n",line_count);
 
-{SKIP} {printf("NO ACTION\n");line_count++;}
-{SKIP1} {printf("no action\n");line_count+=2;}
+					}
+					line_count++;
+				}
+
+[/][/](.*)[\\][\r\n](.+)[\r\n] {printf("kas\n");line_count+=2;}
+"//"(.*)[\r\n] {printf("single\n");line_count++;}
+
+[ \t\v]+ {}
+
+{IDENTIFIER_ERROR} {printf("\n%s is an IDENTIFIER_ERROR\n",yytext);}
+{DECIMAL_POINT_ERROR} {printf("\n%s DECIMALPOINTER_ERROR\n",yytext);}
+{ILL_FORMAT_ERROR} {printf("\n%s is an ILL_FORMAT_ERROR\n",yytext);}
+
+
+
+
+
+
 
 
 
