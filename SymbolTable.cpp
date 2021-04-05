@@ -434,6 +434,7 @@ public:
         parent_id = "";
         new_Scope = 1;
         insertCounter = 0;
+        outputfile.open("arafat.txt");
         //parent_id.append(to_string(cursor_at));
 
     }

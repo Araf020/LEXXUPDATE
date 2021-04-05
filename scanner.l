@@ -644,7 +644,7 @@ DIGIT [0-9]
 
 {CONST_INT} {printf("%s CONST_INT\n",yytext);
 			fprintf(tokenout,"<CONST_INT, %s> ",yytext);
-			fprintf(logout,"\nLine no %d: Token <INT> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <CONST_INT> Lexeme %s found\n",line_count,yytext);
 			string temp(yytext);
 			SymbolInfo sym("CONST_INT",temp);
 			sTable->push(sym,logout);
@@ -686,20 +686,20 @@ DIGIT [0-9]
 
 {MULOP} {printf("<%s, MULOP>\n",yytext);
 			fprintf(tokenout,"<MULOP, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <MULOP> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"Line no %d: Token <MULOP> Lexeme %s found\n",line_count,yytext);
 			}
 {ADDOP} {printf("<%s, ADDOP>\n",yytext);
 			fprintf(tokenout,"<ADDOP, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <ADDOP> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"Line no %d: Token <ADDOP> Lexeme %s found\n",line_count,yytext);
 			}
 
 {INCOP} {printf("<%s incop>\n",yytext);
 			fprintf(tokenout,"<INCOP, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <INCOP> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"Line no %d: Token <INCOP> Lexeme %s found\n",line_count,yytext);
 			}
 {RELOP} {printf("%s RELOP\n",yytext);
 			fprintf(tokenout,"<RELOP, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <RELOP> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"Line no %d: Token <RELOP> Lexeme %s found\n",line_count,yytext);
 			}
 
 
@@ -715,7 +715,7 @@ DIGIT [0-9]
 		 fprintf(logout,"Total errors: %d",error_count);
 		  return 0;
 		}
-. {}
+. {fprintf(logout,"Error at line no %d: Unrecognized character %s ",line_count,yytext);error_count++;}
 
 %%
 

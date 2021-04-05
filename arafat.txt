@@ -1,0 +1,231 @@
+
+New ScopeTable with id 1 created
+Inserted in ScopeTable# 1 at position 1,0
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+
+New ScopeTable with id 1.1 created
+Inserted in ScopeTable# 1.1 at position 6,0
+ScopeTable # 1.1
+6 --> < ID : a > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 0,0
+ScopeTable # 1.1
+0 --> < ID : b > 
+6 --> < ID : a > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 2,0
+ScopeTable # 1.1
+0 --> < ID : b > 
+2 --> < ID : abdc1 > 
+6 --> < ID : a > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 0,1
+ScopeTable # 1.1
+0 --> < ID : b > < ID : _12abcd > 
+2 --> < ID : abdc1 > 
+6 --> < ID : a > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 0,2
+ScopeTable # 1.1
+0 --> < ID : b > < ID : ch > < ID : _12abcd > 
+2 --> < ID : abdc1 > 
+6 --> < ID : a > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 6,1
+ScopeTable # 1.1
+0 --> < ID : b > < ID : ch > < ID : _12abcd > 
+2 --> < ID : abdc1 > 
+6 --> < ID : a > < CONST_CHAR : '\t' > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 4,0
+ScopeTable # 1.1
+0 --> < ID : b > < ID : ch > < ID : _12abcd > 
+2 --> < ID : abdc1 > 
+4 --> < CONST_INT : 5 > 
+6 --> < ID : a > < CONST_CHAR : '\t' > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 5,0
+ScopeTable # 1.1
+1 --> < ID : b > < ID : a > < ID : abdc1 > < ID : _12abcd > < ID : ch > 
+2 --> < CONST_CHAR : '\t' > 
+5 --> < CONST_FLOAT : 3.5140 > 
+7 --> < CONST_INT : 5 > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 0,3
+ScopeTable # 1.1
+0 --> < ID : b > 
+1 --> < ID : b > < ID : a > < ID : abdc1 > < ID : _12abcd > < ID : ch > 
+2 --> < CONST_CHAR : '\t' > 
+5 --> < CONST_FLOAT : 3.5140 > 
+7 --> < CONST_INT : 5 > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 13,22068
+ScopeTable # 1.1
+0 --> < ID : b > 
+1 --> < ID : b > < ID : a > < ID : abdc1 > < ID : _12abcd > < ID : ch > 
+2 --> < CONST_CHAR : '\t' > 
+5 --> < CONST_FLOAT : 3.5140 > 
+7 --> < CONST_INT : 5 > 
+13 --> < ID : a > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 7,0
+ScopeTable # 1.1
+0 --> < ID : b > 
+1 --> < ID : b > < ID : a > < ID : abdc1 > < ID : _12abcd > < ID : ch > 
+2 --> < CONST_CHAR : '\t' > 
+5 --> < CONST_FLOAT : 3.5140 > 
+7 --> < CONST_INT : 5 > < CONST_INT : 1 > 
+13 --> < ID : a > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 7,1
+ScopeTable # 1.1
+0 --> < ID : b > 
+1 --> < ID : b > < ID : a > < ID : abdc1 > < ID : _12abcd > < ID : ch > 
+2 --> < CONST_CHAR : '\t' > 
+5 --> < CONST_FLOAT : 3.5140 > 
+7 --> < CONST_INT : 5 > < ID : ch > < CONST_INT : 1 > 
+13 --> < ID : a > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 7,2
+ScopeTable # 1.1
+0 --> < ID : b > 
+1 --> < ID : b > < ID : a > < ID : abdc1 > < ID : _12abcd > < ID : ch > 
+2 --> < CONST_CHAR : '\t' > 
+5 --> < CONST_FLOAT : 3.5140 > 
+7 --> < CONST_INT : 5 > < CONST_CHAR : 'a' > < ID : ch > < CONST_INT : 1 > 
+13 --> < ID : a > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 6,2
+ScopeTable # 1.1
+0 --> < ID : b > 
+1 --> < ID : b > < ID : a > < ID : abdc1 > < ID : _12abcd > < ID : ch > 
+2 --> < CONST_CHAR : '\t' > 
+5 --> < CONST_FLOAT : 3.5140 > 
+6 --> < CONST_CHAR : '\t' > 
+7 --> < CONST_INT : 5 > < CONST_CHAR : 'a' > < ID : ch > < CONST_INT : 1 > 
+13 --> < ID : a > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 15,22068
+ScopeTable # 1.1
+1 --> < ID : b > < ID : a > < ID : ch > < ID : ch > < ID : _12abcd > < ID : abdc1 > < ID : a > < ID : b > 
+15 --> < ID : c > 
+16 --> < CONST_CHAR : '\t' > < CONST_CHAR : 'a' > < CONST_CHAR : '\t' > 
+20 --> < CONST_FLOAT : 3.5140 > 
+21 --> < CONST_INT : 5 > < CONST_INT : 1 > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 15,22069
+ScopeTable # 1.1
+1 --> < ID : b > < ID : a > < ID : ch > < ID : ch > < ID : _12abcd > < ID : abdc1 > < ID : a > < ID : b > 
+15 --> < ID : c > < ID : printf > 
+16 --> < CONST_CHAR : '\t' > < CONST_CHAR : 'a' > < CONST_CHAR : '\t' > 
+20 --> < CONST_FLOAT : 3.5140 > 
+21 --> < CONST_INT : 5 > < CONST_INT : 1 > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+Inserted in ScopeTable# 1.1 at position 20,0
+ScopeTable # 1.1
+1 --> < ID : b > < ID : a > < ID : ch > < ID : ch > < ID : _12abcd > < ID : abdc1 > < ID : a > < ID : b > 
+15 --> < ID : c > < ID : printf > 
+16 --> < CONST_CHAR : '\t' > < CONST_CHAR : 'a' > < CONST_CHAR : '\t' > 
+20 --> < CONST_FLOAT : 3.5140 > < CONST_INT : 0 > 
+21 --> < CONST_INT : 5 > < CONST_INT : 1 > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+
+ScopeTable # 1.1
+1 --> < ID : b > < ID : a > < ID : ch > < ID : ch > < ID : _12abcd > < ID : abdc1 > < ID : a > < ID : b > 
+15 --> < ID : c > < ID : printf > 
+16 --> < CONST_CHAR : '\t' > < CONST_CHAR : 'a' > < CONST_CHAR : '\t' > 
+20 --> < CONST_FLOAT : 3.5140 > < CONST_INT : 0 > 
+21 --> < CONST_INT : 5 > < CONST_INT : 1 > 
+
+
+ScopeTable # 1
+1 --> < ID : main > 
+
+

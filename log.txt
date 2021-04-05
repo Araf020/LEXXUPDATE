@@ -61,31 +61,13 @@ ScopeTable # 1.1
 ScopeTable # 1
  1 --> <main : ID> 
 
-Line no 2: Token <COMMA> Lexeme , found
-
-Line no 2: Token <ID> Lexeme _124_adaf12 found
-
-ScopeTable # 1.1
- 0 --> <b : ID> <_12abcd : ID> 
- 2 --> <abdc1 : ID> 
- 3 --> <_124_adaf12 : ID> 
- 6 --> <a : ID> 
-
-ScopeTable # 1
- 1 --> <main : ID> 
-
-Line no 2: Token <COMMA> Lexeme , found
-
-Error at line no 2: Invalid prefix on ID or invalid suffix on Number 12_dlka
-
 Line no 2: Token <SEMICOLON> Lexeme ; found
-
+Error at line no 3: Unrecognized character ` 
 Line no 4: Token <ID> Lexeme ch found
 
 ScopeTable # 1.1
  0 --> <b : ID> <ch : ID> <_12abcd : ID> 
  2 --> <abdc1 : ID> 
- 3 --> <_124_adaf12 : ID> 
  6 --> <a : ID> 
 
 ScopeTable # 1
@@ -98,7 +80,6 @@ Line no 4: Token <CONST_CHAR> Lexeme '\t' found --> <CHAR_CONST, 	>
 ScopeTable # 1.1
  0 --> <b : ID> <ch : ID> <_12abcd : ID> 
  2 --> <abdc1 : ID> 
- 3 --> <_124_adaf12 : ID> 
  6 --> <a : ID> <'\t' : CONST_CHAR> 
 
 ScopeTable # 1
@@ -114,12 +95,13 @@ a already exists in current ScopeTable
 
 Line no 5: Token <ASSIGNOP> Lexeme = found
 
-Line no 5: Token <INT> Lexeme 5 found
+Line no 5: Token <CONST_INT> Lexeme 5 found
 
 ScopeTable # 1.1
- 1 --> <b : ID> <a : ID> <_124_adaf12 : ID> <abdc1 : ID> <_12abcd : ID> <ch : ID> 
- 2 --> <'\t' : CONST_CHAR> 
- 11 --> <5 : CONST_INT> 
+ 0 --> <b : ID> <ch : ID> <_12abcd : ID> 
+ 2 --> <abdc1 : ID> 
+ 4 --> <5 : CONST_INT> 
+ 6 --> <a : ID> <'\t' : CONST_CHAR> 
 
 ScopeTable # 1
  1 --> <main : ID> 
@@ -128,39 +110,26 @@ Line no 5: Token <SEMICOLON> Lexeme ; found
 
 Line no 6: Token <ID> Lexeme b found
 
-ScopeTable # 1.1
- 0 --> <b : ID> 
- 1 --> <b : ID> <a : ID> <_124_adaf12 : ID> <abdc1 : ID> <_12abcd : ID> <ch : ID> 
- 2 --> <'\t' : CONST_CHAR> 
- 11 --> <5 : CONST_INT> 
+b already exists in current ScopeTable
 
-ScopeTable # 1
- 1 --> <main : ID> 
+
 
 Line no 6: Token <ASSIGNOP> Lexeme = found
 
 Line no 6: Token <ID> Lexeme a found
 
-ScopeTable # 1.1
- 0 --> <b : ID> 
- 1 --> <b : ID> <a : ID> <_124_adaf12 : ID> <abdc1 : ID> <_12abcd : ID> <ch : ID> 
- 2 --> <'\t' : CONST_CHAR> 
- 11 --> <5 : CONST_INT> 
- 13 --> <a : ID> 
+a already exists in current ScopeTable
 
-ScopeTable # 1
- 1 --> <main : ID> 
-Line no 6: TOKEN <MULOP> Lexeme * found
+
+Line no 6: Token <MULOP> Lexeme * found
 
 Line no 6: Token <CONST_FLOAT> Lexeme 3.5140 found
 
 ScopeTable # 1.1
- 0 --> <b : ID> 
- 1 --> <b : ID> <a : ID> <_124_adaf12 : ID> <abdc1 : ID> <_12abcd : ID> <ch : ID> 
+ 1 --> <b : ID> <a : ID> <abdc1 : ID> <_12abcd : ID> <ch : ID> 
  2 --> <'\t' : CONST_CHAR> 
  5 --> <3.5140 : CONST_FLOAT> 
- 11 --> <5 : CONST_INT> 
- 13 --> <a : ID> 
+ 7 --> <5 : CONST_INT> 
 
 ScopeTable # 1
  1 --> <main : ID> 
@@ -169,9 +138,15 @@ Line no 6: Token <SEMICOLON> Lexeme ; found
 
 Line no 7: Token <ID> Lexeme b found
 
-b already exists in current ScopeTable
+ScopeTable # 1.1
+ 0 --> <b : ID> 
+ 1 --> <b : ID> <a : ID> <abdc1 : ID> <_12abcd : ID> <ch : ID> 
+ 2 --> <'\t' : CONST_CHAR> 
+ 5 --> <3.5140 : CONST_FLOAT> 
+ 7 --> <5 : CONST_INT> 
 
-
+ScopeTable # 1
+ 1 --> <main : ID> 
 
 Line no 7: Token <ASSIGNOP> Lexeme = found
 
@@ -193,9 +168,16 @@ Line no 8: Token <SEMICOLON> Lexeme ; found
 
 Line no 9: Token <ID> Lexeme a found
 
-a already exists in current ScopeTable
+ScopeTable # 1.1
+ 0 --> <b : ID> 
+ 1 --> <b : ID> <a : ID> <abdc1 : ID> <_12abcd : ID> <ch : ID> 
+ 2 --> <'\t' : CONST_CHAR> 
+ 5 --> <3.5140 : CONST_FLOAT> 
+ 7 --> <5 : CONST_INT> 
+ 13 --> <a : ID> 
 
-
+ScopeTable # 1
+ 1 --> <main : ID> 
 
 Line no 9: Token <ASSIGNOP> Lexeme = found
 
@@ -204,17 +186,16 @@ Line no 9: Token <ID> Lexeme a found
 a already exists in current ScopeTable
 
 
-Line no 9: TOKEN <ADDOP> Lexeme + found
+Line no 9: Token <ADDOP> Lexeme + found
 
-Line no 9: Token <INT> Lexeme 1 found
+Line no 9: Token <CONST_INT> Lexeme 1 found
 
 ScopeTable # 1.1
  0 --> <b : ID> 
- 1 --> <b : ID> <a : ID> <_124_adaf12 : ID> <abdc1 : ID> <_12abcd : ID> <ch : ID> 
+ 1 --> <b : ID> <a : ID> <abdc1 : ID> <_12abcd : ID> <ch : ID> 
  2 --> <'\t' : CONST_CHAR> 
  5 --> <3.5140 : CONST_FLOAT> 
- 7 --> <1 : CONST_INT> 
- 11 --> <5 : CONST_INT> 
+ 7 --> <5 : CONST_INT> <1 : CONST_INT> 
  13 --> <a : ID> 
 
 ScopeTable # 1
@@ -228,11 +209,10 @@ Line no 10: Token <ID> Lexeme ch found
 
 ScopeTable # 1.1
  0 --> <b : ID> 
- 1 --> <b : ID> <a : ID> <_124_adaf12 : ID> <abdc1 : ID> <_12abcd : ID> <ch : ID> 
+ 1 --> <b : ID> <a : ID> <abdc1 : ID> <_12abcd : ID> <ch : ID> 
  2 --> <'\t' : CONST_CHAR> 
  5 --> <3.5140 : CONST_FLOAT> 
- 7 --> <1 : CONST_INT> <ch : ID> 
- 11 --> <5 : CONST_INT> 
+ 7 --> <5 : CONST_INT> <ch : ID> <1 : CONST_INT> 
  13 --> <a : ID> 
 
 ScopeTable # 1
@@ -244,11 +224,10 @@ Line no 10: Token <CONST_CHAR> Lexeme 'a' found --> <CHAR_CONST, a>
 
 ScopeTable # 1.1
  0 --> <b : ID> 
- 1 --> <b : ID> <a : ID> <_124_adaf12 : ID> <abdc1 : ID> <_12abcd : ID> <ch : ID> 
+ 1 --> <b : ID> <a : ID> <abdc1 : ID> <_12abcd : ID> <ch : ID> 
  2 --> <'\t' : CONST_CHAR> 
  5 --> <3.5140 : CONST_FLOAT> 
- 7 --> <1 : CONST_INT> <'a' : CONST_CHAR> <ch : ID> 
- 11 --> <5 : CONST_INT> 
+ 7 --> <5 : CONST_INT> <'a' : CONST_CHAR> <ch : ID> <1 : CONST_INT> 
  13 --> <a : ID> 
 
 ScopeTable # 1
@@ -300,11 +279,13 @@ Line no 14: Token <ASSIGNOP> Lexeme = found
 Line no 14: Token <CONST_CHAR> Lexeme '\t' found --> <CHAR_CONST, 	>
 
 ScopeTable # 1.1
- 1 --> <b : ID> <a : ID> <ch : ID> <ch : ID> <_12abcd : ID> <abdc1 : ID> <_124_adaf12 : ID> <a : ID> <b : ID> 
+ 0 --> <b : ID> 
+ 1 --> <b : ID> <a : ID> <abdc1 : ID> <_12abcd : ID> <ch : ID> 
+ 2 --> <'\t' : CONST_CHAR> 
+ 5 --> <3.5140 : CONST_FLOAT> 
  6 --> <'\t' : CONST_CHAR> 
- 16 --> <'\t' : CONST_CHAR> <'a' : CONST_CHAR> 
- 20 --> <3.5140 : CONST_FLOAT> 
- 21 --> <1 : CONST_INT> <5 : CONST_INT> 
+ 7 --> <5 : CONST_INT> <'a' : CONST_CHAR> <ch : ID> <1 : CONST_INT> 
+ 13 --> <a : ID> 
 
 ScopeTable # 1
  1 --> <main : ID> 
@@ -316,12 +297,11 @@ Line no 15: TOKEN <CHAR> Lexeme char found
 Line no 15: Token <ID> Lexeme c found
 
 ScopeTable # 1.1
- 1 --> <b : ID> <a : ID> <ch : ID> <ch : ID> <_12abcd : ID> <abdc1 : ID> <_124_adaf12 : ID> <a : ID> <b : ID> 
- 6 --> <'\t' : CONST_CHAR> 
+ 1 --> <b : ID> <a : ID> <ch : ID> <ch : ID> <_12abcd : ID> <abdc1 : ID> <a : ID> <b : ID> 
  15 --> <c : ID> 
- 16 --> <'\t' : CONST_CHAR> <'a' : CONST_CHAR> 
+ 16 --> <'\t' : CONST_CHAR> <'a' : CONST_CHAR> <'\t' : CONST_CHAR> 
  20 --> <3.5140 : CONST_FLOAT> 
- 21 --> <1 : CONST_INT> <5 : CONST_INT> 
+ 21 --> <5 : CONST_INT> <1 : CONST_INT> 
 
 ScopeTable # 1
  1 --> <main : ID> 
@@ -339,12 +319,11 @@ Line no 15: Token <SEMICOLON> Lexeme ; found
 Line no 16: Token <ID> Lexeme printf found
 
 ScopeTable # 1.1
- 1 --> <b : ID> <a : ID> <ch : ID> <ch : ID> <_12abcd : ID> <abdc1 : ID> <_124_adaf12 : ID> <a : ID> <b : ID> 
- 6 --> <'\t' : CONST_CHAR> 
+ 1 --> <b : ID> <a : ID> <ch : ID> <ch : ID> <_12abcd : ID> <abdc1 : ID> <a : ID> <b : ID> 
  15 --> <c : ID> <printf : ID> 
- 16 --> <'\t' : CONST_CHAR> <'a' : CONST_CHAR> 
+ 16 --> <'\t' : CONST_CHAR> <'a' : CONST_CHAR> <'\t' : CONST_CHAR> 
  20 --> <3.5140 : CONST_FLOAT> 
- 21 --> <1 : CONST_INT> <5 : CONST_INT> 
+ 21 --> <5 : CONST_INT> <1 : CONST_INT> 
 
 ScopeTable # 1
  1 --> <main : ID> 
@@ -369,15 +348,14 @@ Line no 22: Token <COMMENT> Lexeme /** another
 
 Line no 28: Token <RETURN> Lexeme return found
 
-Line no 28: Token <INT> Lexeme 0 found
+Line no 28: Token <CONST_INT> Lexeme 0 found
 
 ScopeTable # 1.1
- 1 --> <b : ID> <a : ID> <ch : ID> <ch : ID> <_12abcd : ID> <abdc1 : ID> <_124_adaf12 : ID> <a : ID> <b : ID> 
- 6 --> <'\t' : CONST_CHAR> 
+ 1 --> <b : ID> <a : ID> <ch : ID> <ch : ID> <_12abcd : ID> <abdc1 : ID> <a : ID> <b : ID> 
  15 --> <c : ID> <printf : ID> 
- 16 --> <'\t' : CONST_CHAR> <'a' : CONST_CHAR> 
+ 16 --> <'\t' : CONST_CHAR> <'a' : CONST_CHAR> <'\t' : CONST_CHAR> 
  20 --> <3.5140 : CONST_FLOAT> <0 : CONST_INT> 
- 21 --> <1 : CONST_INT> <5 : CONST_INT> 
+ 21 --> <5 : CONST_INT> <1 : CONST_INT> 
 
 ScopeTable # 1
  1 --> <main : ID> 
@@ -388,12 +366,11 @@ Error at line no 29: Unterminated Comment /* unfinished
 	}
 
 ScopeTable # 1.1
- 1 --> <b : ID> <a : ID> <ch : ID> <ch : ID> <_12abcd : ID> <abdc1 : ID> <_124_adaf12 : ID> <a : ID> <b : ID> 
- 6 --> <'\t' : CONST_CHAR> 
+ 1 --> <b : ID> <a : ID> <ch : ID> <ch : ID> <_12abcd : ID> <abdc1 : ID> <a : ID> <b : ID> 
  15 --> <c : ID> <printf : ID> 
- 16 --> <'\t' : CONST_CHAR> <'a' : CONST_CHAR> 
+ 16 --> <'\t' : CONST_CHAR> <'a' : CONST_CHAR> <'\t' : CONST_CHAR> 
  20 --> <3.5140 : CONST_FLOAT> <0 : CONST_INT> 
- 21 --> <1 : CONST_INT> <5 : CONST_INT> 
+ 21 --> <5 : CONST_INT> <1 : CONST_INT> 
 
 ScopeTable # 1
  1 --> <main : ID> 

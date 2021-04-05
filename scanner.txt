@@ -1,5 +1,5 @@
 int main(){
-	int a,b,12abcd,abdc1,_12abcd,_124_adaf12,12_dlka;
+	int a,b,12abcd,abdc1,_12abcd;
 	`
 	ch='\t';
 	a = 5;
