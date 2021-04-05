@@ -36,9 +36,9 @@ FILE *tokenout;
 %}
 
 NEWLINE \n
-IDENTIFIER [a-zA-Z][a-zA-Z0-9]*
+IDENTIFIER [a-zA-Z_][a-zA-Z_0-9]*
 
-IDENTIFIER_ERROR [0-9]+[a-zA-Z]+[a-zA-Z0-9]*
+IDENTIFIER_ERROR [0-9]+[a-zA-Z_]+[a-zA-Z_0-9]*
 
 DECIMAL_POINT_ERROR ([0-9]*[.][0-9]*[.]+[0-9]*)+
 
@@ -168,7 +168,7 @@ DIGIT [0-9]
 			strcpy(output,const_character.c_str());
 
 			printf("<CONST_C, %s> at Line: %d\n",output,line_count);
-			fprintf(tokenout,"<CONST_CHAR, %s> ",output);
+			fprintf(tokenout,"<CONST_CHAR, %c> ",output[1]);
 		   	fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme %s found --> <CHAR_CONST, %c> \n",line_count,output,output[1]);
 		   	string temp(output);
 			SymbolInfo sym("CONST_CHAR",temp);
@@ -181,6 +181,7 @@ DIGIT [0-9]
 <END_WITH_SQ>[\\][t]['] {
 
 	cout<<"CONST_CHAR: \t\n";
+	fprintf(tokenout,"<CONST_CHAR, \t");
 	fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme %s found --> <CHAR_CONST, \t> ",line_count,yytext);
 	string temp(yytext);
 			SymbolInfo sym("CONST_CHAR",temp);
@@ -444,7 +445,7 @@ DIGIT [0-9]
 	//	outputfile<<"<COMMA, "<<yytext;
 		}
 {SPECIALS} {printf("SPECIALS <%s> found\n",yytext);
-			fprintf(tokenout,"<CONST_CHAR, %s> ",yytext);
+			fprintf(tokenout,"<CONST_CHAR, %c> ",yytext[1]);
 			fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme %s found --> <CHAR_CONST, %c>\n",line_count,yytext, yytext[1]);
 			
 			string temp(yytext);
@@ -635,7 +636,7 @@ DIGIT [0-9]
 					 	}
 
 					 }
-					 
+
 
 		}
 
