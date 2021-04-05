@@ -1,1 +1,1 @@
-<INT><ID, main> <LPAREN, (> <RPAREN, )> <LCURL, {> <STRING, "ab	d"<SEMICOLON, ;> <ID, printf> <LPAREN, (> <STRING, "abcdefghi"<RPAREN, )> <SEMICOLON, ;> <RCURL, }> 
+<ID, ijk> 

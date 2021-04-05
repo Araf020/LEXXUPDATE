@@ -380,7 +380,7 @@ void scopeTable::displayTable(FILE *logout)
         }
         cout <<i << " --> ";
         outputfile <<i << " --> ";
-        fprintf(logout, "%d -->",i );
+        fprintf(logout, " %d --> ",i );
         while (current != nullptr)
         {   
 
@@ -390,7 +390,7 @@ void scopeTable::displayTable(FILE *logout)
             strcpy(out2,current->value.c_str());
 
             cout << "<" << current->key << " : " << current->value << " > ";
-            outputfile << "<" << current->key << " : " << current->value << " > ";
+            outputfile << "< " << current->key << " : " << current->value << " > ";
             
                 /* code */
                 fprintf(logout, "<%s : %s> ",out2,out1);

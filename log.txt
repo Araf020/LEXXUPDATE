@@ -1,37 +1,38 @@
 
-Line no 1: TOKEN <INT> Lexeme int found
+Error at line no 1: Too many decimal points 1.2.345
 
-Line no 1: Token <ID> Lexeme main found
+Error at line no 2: Ill formed Number 1E10.7
 
-ScopeTable # 1
-1 --><main : ID> 
+Error at line no 3: Invalid prefix on ID or invalid suffix on Number 12abcd
 
-Line no 1: Token <LPAREN> Lexeme ( found
+Error at line no 4: Multi character constant error 'ab'
 
-Line no 1: Token <RPAREN> Lexeme ) found
+Error at line no 5: Unterminated character 'a
 
-Line no 1: Token <LCURL> Lexeme { found
+Error at line no 6: Unterminated character '
 
-Line no 2: Token <SEMICOLON> Lexeme ; found
+Error at line no 7: Multi character constant error 'ab cd'
 
-Line no 3: Token <ID> Lexeme printf found
+Error at line no 8: Unterminated character '\'
 
-ScopeTable # 1.1
-1 --><printf : ID> 
+Error at line no 9: Empty character constant error ''
 
-ScopeTable # 1
-1 --><main : ID> 
-
-Line no 3: Token <LPAREN> Lexeme ( found
-
-Line no 5: Token <RPAREN> Lexeme ) found
-
-Line no 5: Token <SEMICOLON> Lexeme ; found
-
-Line no 7: Token <RCURL> Lexeme } found
+Error at line no 10: Unterminated String "abcd
+Error at line no 11: Unterminated String "abcd\
+efgh
+Line no 13: Token <ID> Lexeme ijk found
 
 ScopeTable # 1
-1 --><main : ID> 
+ 3 --> <ijk : ID> 
 
-Total lines: 7
-Total errors: 0
+Error at line no 13: Unterminated String "
+Line no 14: Token <COMMENT> Lexeme /*abc
+defdksdlsa
+istiak
+nafix*/ comment found
+
+ScopeTable # 1
+ 3 --> <ijk : ID> 
+
+Total lines: 17
+Total errors: 12

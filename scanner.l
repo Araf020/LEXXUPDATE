@@ -105,6 +105,7 @@ SKIP1 [/][/](.*)[\\][\r\n](.*)[\r\n]
 SKIP [\/][\/](.*)[\r\n]
 
 SKIP2 ([/][\*]([^*]|[\r\n]|(\*([^/]|[\r\n])))*[\*][/\\])|[/][/]+(.*)[\r\n]
+UNFINISHED_SKIP2 "/*"([^*]|\*+[^*/])*\*?
 
 WHITESPACE [ \t\f\r\v]+ 
 LETTER [a-zA-Z]
@@ -131,6 +132,7 @@ DIGIT [0-9]
 	BEGIN END_WITH_SQ;
 
 	}
+
 
 ['][\\]['] {
 
@@ -248,12 +250,14 @@ DIGIT [0-9]
 {SKIP2} {
 
 	printf("NO ACTION\n %s\n",yytext);
-	string str(yytext);
-	char str1[str.length()];
+	fprintf(logout,"\nLine no %d: Token <COMMENT> Lexeme %s comment found\n",line_count,yytext);
+	string str2(yytext);
+	
+	char str1[str2.length()];
 
-	strcpy(str1,str.c_str());
+	strcpy(str1,str2.c_str());
 
-	for(int i=0;i<str.length();i++){
+	for(int i=0;i<str2.length();i++){
 		if (str1[i]=='\n') {
 			line_count++;
 		}
@@ -262,15 +266,16 @@ DIGIT [0-9]
 
 }
 
-[/][\*]+(.*)[\r\n]? {
+{UNFINISHED_SKIP2} {
 					string str(yytext);
 					char out[str.length()];
+					error_count++;
 					strcpy(out,str.c_str());
-					if(out[str.length()-1] != '/' && out[str.length()-2] != '*'){
+					//if(out[str.length()-1] != '/' && out[str.length()-2] != '*'){
 						printf("\ncomment not finished Error! at line:%d \n",line_count);
-						fprintf(logout,"\nError at line no %d: Unterminated Comment %s....\n",line_count,yytext);
-						error_count++;
-					}
+						fprintf(logout,"\nError at line no %d: Unterminated Comment %s\n",line_count,yytext);
+						
+					//}
 					for (int i=0;i<str.length() ;i++ ) {
 						
 						if (out[i]=='\n'|| out[i]=='\r') {
@@ -278,16 +283,25 @@ DIGIT [0-9]
 						}
 							
 				   }
-				     printf("Total Line Number: %d \n",line_count);
-					 printf("Total errors: %d \n",error_count);
-					 fprintf(logout,"\nTotal lines: %d\n",line_count);
-					 fprintf(logout,"Total errors: %d",error_count);
+				    
 				     
 				}
 
-[/][/](.*)[\\][\r\n](.+)[\r\n] {printf("single\n");line_count+=2;}
+[/][/](.*)[\\][\r\n](.+)[\r\n] {
 
-"//"(.*)[\r\n] {printf("single\n");line_count++;}
+								printf("single\n");line_count+=2;
+								//fprintf(logout,"\nError at line no %d: Unterminated Comment %s....\n",line_count,yytext);
+							    fprintf(logout,"\nLine no %d: Token <COMMENT> Lexeme %s comment found\n",line_count,yytext);
+
+							    }
+
+"//"(.*)[\r\n]			     {
+								printf("single\n");line_count++;
+								//fprintf(logout,"\nError at line no %d: Unterminated Comment %s....\n",line_count,yytext);
+								fprintf(logout,"\nLine no %d: Token <COMMENT> Lexeme %s comment found\n",line_count,yytext);
+
+
+							 }
 
 [ \t\v]+ {}
 
@@ -521,9 +535,9 @@ DIGIT [0-9]
 
 					strcpy(output,str.c_str());
 					char qq;
+					fprintf(logout,"\nLine no %d: Token <STRING> Lexeme %s found --> <STRING, ",line_count,yytext);
 					
 					fprintf(tokenout,"<STRING, ");
-
 
 					
 					for(int i=0;i<strlen(yytext);i++){
@@ -532,6 +546,7 @@ DIGIT [0-9]
 							  qq = '\t';
 							  printf("%c",qq);
 							  fprintf(tokenout,"%c",qq);
+							  fprintf(logout,"%c",qq);
 							 
 							  i++;
 							  continue;
@@ -542,6 +557,7 @@ DIGIT [0-9]
 							qq = '\n';
 							  printf("%c",qq);
 							   fprintf(tokenout,"%c",qq);
+							    fprintf(logout,"%c",qq);
 							i++;
 							continue;
 						}
@@ -551,10 +567,12 @@ DIGIT [0-9]
 							qq = '\b';
 							  printf("%c",qq);
 							   fprintf(tokenout,"%c",qq);
+							    fprintf(logout,"%c",qq);
 							i++;
 							continue;
 						}
 						else if(output[i]=='\n'){
+							
 							if(output[i-1]=='\\'){
 								line_count++;
 								
@@ -563,8 +581,9 @@ DIGIT [0-9]
 
 							output2[i]='\n';
 							qq = '\n';
-							  printf("%c",qq);
-							   fprintf(tokenout,"%c",qq);
+							printf("%c",qq);
+							fprintf(tokenout,"%c",qq);
+							fprintf(logout,"%c",qq);
 							line_count++;
 							
 							continue;
@@ -581,11 +600,15 @@ DIGIT [0-9]
 							output2[i] = output[i];
 
 							printf("%c",output[i]);
-							 fprintf(tokenout,"%c",output[i]);
+							fprintf(tokenout,"%c",output[i]);
+							fprintf(logout,"%c",output[i]);
 						}
+
 
 					}
 					cout<<endl;
+					fprintf(tokenout,"> ");
+					fprintf(logout,">\n");
 					
 				
 				
@@ -595,9 +618,26 @@ DIGIT [0-9]
 				}
 
 
-{STRINGERROR} {		
-		fprintf(logout,"\nError at line no %d: Unterminated String %s",line_count,yytext);
-				}
+{STRINGERROR} {	
+
+					fprintf(logout,"\nError at line no %d: Unterminated String %s",line_count,yytext);
+					error_count++;
+
+					string str(yytext);
+
+					char output[str.length()];
+				
+					 strcpy(output,str.c_str());
+
+					 for (int i=0; i<str.length(); i++ ) {
+					 	if (output[i]=='\n') {
+					 		line_count++;
+					 	}
+
+					 }
+					 
+
+		}
 
 
 
