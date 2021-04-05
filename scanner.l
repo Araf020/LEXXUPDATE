@@ -8,6 +8,7 @@
 %x MSCOMMENT
 %x DUMMY
 
+
 %{
 #include<stdio.h>
 #include<stdlib.h>
@@ -17,10 +18,11 @@
 using namespace std;
 
 
-
 int line_count=1;
 int error_count=0;
-SymbolTable sTable(7);
+
+SymbolTable *sTable;
+
 string c;
 string String_literals1;
 string String_literals2;
@@ -32,6 +34,7 @@ FILE *logout;
 FILE *tokenout;
 
 %}
+
 NEWLINE \n
 IDENTIFIER [a-zA-Z][a-zA-Z0-9]*
 
@@ -258,7 +261,7 @@ DIGIT [0-9]
 					strcpy(out,str.c_str());
 					if(out[str.length()-1] != '/' && out[str.length()-2] != '*'){
 						printf("\ncomment not finished Error! at line:%d \n",line_count);
-						fprintf(logout,"\nError at line no %d: Unterminated Comment %s",line_count,yytext);
+						fprintf(logout,"\nError at line no %d: Unterminated Comment %s....\n",line_count,yytext);
 						error_count++;
 					}
 					for (int i=0;i<str.length() ;i++ ) {
@@ -268,6 +271,11 @@ DIGIT [0-9]
 						}
 							
 				   }
+				     printf("Total Line Number: %d \n",line_count);
+					 printf("Total errors: %d \n",error_count);
+					 fprintf(logout,"\nTotal lines: %d\n",line_count);
+					 fprintf(logout,"Total errors: %d",error_count);
+				     return 0;
 				}
 
 [/][/](.*)[\\][\r\n](.+)[\r\n] {printf("single\n");line_count+=2;}
@@ -602,9 +610,16 @@ DIGIT [0-9]
 	}
 
 
-{IDENTIFIER} {printf("IDENTIFIER <%s> found\n",yytext);
+{IDENTIFIER} {
+
+			printf("IDENTIFIER <%s> found\n",yytext);
 			fprintf(tokenout,"<ID, %s> ",yytext);
 			fprintf(logout,"\nLine no %d: Token <ID> Lexeme %s found\n",line_count,yytext);
+			
+			SymbolInfo sy("dkas","dska");
+
+			sTable->push(sy);
+			sTable->printAllScopeTable(logout);
 		
 		//outputfile<<"<ID, "<<yytext;
 	}
@@ -650,6 +665,7 @@ int main(int argc,char *argv[]){
 
 	
 	
+	
 	if(argc!=2){
 		printf("Please provide input file name and try again\n");
 		return 0;
@@ -665,6 +681,8 @@ int main(int argc,char *argv[]){
 	
 	logout= fopen("log.txt","w");
 	tokenout= fopen("token.txt","w");
+	sTable = new SymbolTable(7);
+	sTable->EnterScope();
 
 	yyin= fin;
 	yylex();

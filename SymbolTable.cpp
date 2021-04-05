@@ -1,5 +1,8 @@
 #include <bits/stdc++.h>
 #include <fstream>
+#include<stdio.h>
+#include<stdlib.h>
+#include<iostream>
 
 using namespace std;
 #define global 1
@@ -103,6 +106,7 @@ public:
 
     }
 
+
     void setscope_Id(string parent_id, string current_id){
         //cout<<"scopeidset clled"<<endl;
 
@@ -131,8 +135,10 @@ public:
     void Insert(SymbolInfo data); /// consider hashtableShrinking()
     bool Delete(string key);   /// consider hashtableShrinking()
     SymbolInfo* Search(string key);
-    void displayTable();
+    void displayTable(FILE *logout);
 };
+
+
 
 void scopeTable::Insert(SymbolInfo data)
 {
@@ -179,10 +185,9 @@ void scopeTable::Insert(SymbolInfo data)
     {                                    // eg: list: 5->9->NULL  , add 4
         SymbolInfo *next = table[index]->next; //     list: 5->4->9->NULL
         table[index]->next = newNode;
-         cout<<"Inserted in ScopeTable# "<< this->scopeTable_id<<" at position "<<index<< "," <<cursorList[index]<<endl;
+        cout<<"Inserted in ScopeTable# "<< this->scopeTable_id<<" at position "<<index<< "," <<cursorList[index]<<endl;
 
-         outputfile<<"Inserted in ScopeTable# "<< this->scopeTable_id<<" at position "<<index<< "," <<cursorList[index]<<endl;
-
+        outputfile<<"Inserted in ScopeTable# "<< this->scopeTable_id<<" at position "<<index<< "," <<cursorList[index]<<endl;
 
         newNode->setTableId(this->scopeTable_id);  ///setting the table_id of that symbol ;-;
         string symbol_position = "";
@@ -190,9 +195,10 @@ void scopeTable::Insert(SymbolInfo data)
          symbol_position.append(to_string(index));        ///creating symbol position consists of
          symbol_position.append(",");
          symbol_position.append(to_string(cursorList[index]));
+       
          newNode->setCursorAt(symbol_position); ///setting position at the the table
 
-         cursorList[index] = cursorList[index]+1;
+        cursorList[index] = cursorList[index]+1;
         newNode->next = next;
 
     }
@@ -344,7 +350,7 @@ scopeTable::~scopeTable()
 }
 
 
-void scopeTable::displayTable()
+void scopeTable::displayTable(FILE *logout)
 {
 
     if(this == nullptr){
@@ -352,27 +358,40 @@ void scopeTable::displayTable()
         return;    ///if symbol table is empty
     }
     cout<<"ScopeTable # "<<this->scopeTable_id<<endl;
+    char out[scopeTable_id.length()];
+    strcpy(out,scopeTable_id.c_str());
     outputfile<<"ScopeTable # "<<this->scopeTable_id<<endl;
+    fprintf(logout, "ScopeTable # %s\n",out);
 
 
     for (int i = 0; i < size; i++)
     { // visit every node in table
-
+        
         cout <<i << " --> ";
         outputfile <<i << " --> ";
+        fprintf(logout, " -->" );
         SymbolInfo *current = table[i];
         while (current != nullptr)
-        {
+        {   
+            char out1[current->key.length()];
+            strcpy(out1,current->key.c_str());
+            char out2[current->value.length()];
+            strcpy(out2,current->value.c_str());
+
             cout << "<" << current->key << " : " << current->value << " > ";
             outputfile << "<" << current->key << " : " << current->value << " > ";
+            fprintf(logout, "<%s : %s> ",out1,out2);
             current = current->next;
         }
+
         cout << endl;
         outputfile << "\n";
+        fprintf(logout, "\n");
 
     }
     cout << endl;
     outputfile<<"\n";
+    fprintf(logout, "\n");
 }
 
 
@@ -404,32 +423,27 @@ public:
 
     }
 
-    bool push(string id,string value);
+    bool push(SymbolInfo symbol);
 
     bool pop();
 
     scopeTable* getTop();
 
     void search_globally(string name);
-
     bool Delete_from_current(string key);
-
     void EnterScope();
-    void printCurrent();
-    void printAllScopeTable();
-
+    void printCurrent(FILE *logout);
+    void printAllScopeTable(FILE *logout);
 
 };
 
-bool SymbolTable::push(string id, string value) {
-    //if(top== nullptr){
-    //cout<<"no scop table in SymbolTable\n";
-    /// return false;
-    //}
-    SymbolInfo symbolInfo(id,value);
-    top->Insert(symbolInfo);
+
+bool SymbolTable::push(SymbolInfo sym) {
+   
+    top->Insert(sym);
     top->next = nullptr;
     insertCounter++;
+    
     return true;
 
 }
@@ -456,6 +470,7 @@ bool SymbolTable::pop() {
     top->next = nullptr;
     return  true;
 }
+
 
 scopeTable* SymbolTable::getTop() {
     return top;
@@ -508,18 +523,19 @@ void SymbolTable::EnterScope() {
 
 }
 
-void SymbolTable::printAllScopeTable() {
+void SymbolTable::printAllScopeTable(FILE *logout) {
 
     scopeTable* cur = this->top;
     while (cur != nullptr){
 
-        cur->displayTable();
+        cur->displayTable(logout);
         cur  = cur->parent;
         cout<<endl;
         outputfile<<"\n";
     }
 
 }
+
 
  void SymbolTable::search_globally(string name)
  {
@@ -561,8 +577,8 @@ SymbolInfo* SymbolTable::search_here(string name){
 
     }
 
-void SymbolTable::printCurrent() {
+void SymbolTable::printCurrent(FILE *logout) {
 
-    this->top->displayTable();
+    this->top->displayTable(logout);
 
 }
