@@ -115,7 +115,11 @@ DIGIT [0-9]
 
 
 
-
+[']['] {
+			printf("\nEmpty character constant error %d: %s\n",line_count,yytext);
+			fprintf(logout,"\nError at line no %d: Empty character constant error %s\n",line_count,yytext);
+			error_count++;
+}
 
 ['] {
 	
@@ -128,11 +132,11 @@ DIGIT [0-9]
 ['][\\]['] {
 
 			printf("sq UNFINISHED Error at line %d: %s\n",line_count,yytext);
-			fprintf(logout,"Error at line no %d: Empty character constant error %s",line_count,yytext);
+			fprintf(logout,"\nError at line no %d: Unterminated character %s\n",line_count,yytext);
 			error_count++;
 			}
 
-<END_WITH_SQ>[a-zA-Z0-9]  {
+<END_WITH_SQ>[a-zA-Z0-9]|[\\]  {
 						    string str(yytext);
 						    const_character = str;
 						    c = c + str;
@@ -142,8 +146,8 @@ DIGIT [0-9]
 <END_WITH_SQ>[\r\n]       {
 							char output[c.length()+1];
 							strcpy(output,c.c_str());
-							printf("Error at line no %d: Unterminated character %s",line_count, output);
-							fprintf(logout,"\nError at line no %d: Unterminated character %s",line_count, output);
+							printf("\nError at line no %d: Unterminated character %s\n",line_count, output);
+							fprintf(logout,"\nError at line no %d: Unterminated character %s\n",line_count, output);
 							line_count++;
 							error_count++;
 							BEGIN INITIAL;
@@ -168,7 +172,7 @@ DIGIT [0-9]
 <END_WITH_SQ>[\\][t]['] {
 
 	cout<<"CONST_CHAR: \t\n";
-	fprintf(logout,"Line no %d: Token <CONST_CHAR> Lexeme \t found\n",line_count);
+	fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme \t found\n",line_count);
 
 
 	BEGIN INITIAL;
@@ -177,7 +181,7 @@ DIGIT [0-9]
 								printf("UnknownError ERROR at Line: %d\n",line_count);
 
 								
-							fprintf(logout,"Line no: %d UnknownError %s",line_count, yytext);
+							fprintf(logout,"\nLine no: %d UnknownError %s\n",line_count, yytext);
 							error_count++;
 								BEGIN INITIAL;
 						  
@@ -192,6 +196,7 @@ DIGIT [0-9]
 							//fprintf(tokenout,"<CONST_MULTI_CHAR, %s> ",yytext);
 							fprintf(logout,"\nError at line no %d: Multi character constant error %s\n",line_count,yytext);
 			//sTable.push("COsMMA",yytext);
+							error_count++;
 									BEGIN INITIAL;
 
 							    }
@@ -252,8 +257,9 @@ DIGIT [0-9]
 					char out[str.length()];
 					strcpy(out,str.c_str());
 					if(out[str.length()-1] != '/' && out[str.length()-2] != '*'){
-						printf("comment not finished Error! at line:%d \n",line_count);
-
+						printf("\ncomment not finished Error! at line:%d \n",line_count);
+						fprintf(logout,"\nError at line no %d: Unterminated Comment %s",line_count,yytext);
+						error_count++;
 					}
 					for (int i=0;i<str.length() ;i++ ) {
 						
@@ -264,25 +270,26 @@ DIGIT [0-9]
 				   }
 				}
 
-[/][/](.*)[\\][\r\n](.+)[\r\n] {printf("kas\n");line_count+=2;}
+[/][/](.*)[\\][\r\n](.+)[\r\n] {printf("single\n");line_count+=2;}
 "//"(.*)[\r\n] {printf("single\n");line_count++;}
 
 [ \t\v]+ {}
 
 {IDENTIFIER_ERROR} {printf("\n%s is an IDENTIFIER_ERROR\n",yytext);
-					fprintf(logout,"\nError at line no %d: Invalid prefix on ID or invalid suffix on Number %s",line_count,yytext);
+					fprintf(logout,"\nError at line no %d: Invalid prefix on ID or invalid suffix on Number %s\n",line_count,yytext);
 
 					error_count++;
 				
 					}
 {DECIMAL_POINT_ERROR} {printf("\n%s DECIMALPOINTER_ERROR\n",yytext);
-						fprintf(logout,"\nError at line no %d: Too many decimal points %s",line_count,yytext);
-						
+						fprintf(logout,"\nError at line no %d: Too many decimal points %s\n",line_count,yytext);
+						error_count++;
 					}
 
 {ILL_FORMAT_ERROR} {printf("\n%s is an ILL_FORMAT_ERROR\n",yytext);
 				
-					fprintf(logout,"\nError at line no %d: Ill formed Number %s",line_count,yytext);
+					fprintf(logout,"\nError at line no %d: Ill formed Number %s\n",line_count,yytext);
+					error_count++;
 
 
 				}
@@ -320,7 +327,7 @@ DIGIT [0-9]
 (for) {printf(" <%s> found\n",yytext);
 				//outputfile<<"<FOR> ";
 		    fprintf(tokenout,"<FOR>");
-			fprintf(logout,"Line no %d: Token <FOR> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <FOR> Lexeme %s found\n",line_count,yytext);
 				}
 (do) {printf(" <%s> found\n",yytext);
 			//outputfile<<"<DO> ";
@@ -402,8 +409,8 @@ DIGIT [0-9]
 	//	outputfile<<"<COMMA, "<<yytext;
 		}
 {SPECIALS} {printf("SPECIALS <%s> found\n",yytext);
-			fprintf(tokenout,"<SPECIALS, %s> ",yytext);
-			fprintf(logout,"\nLine no %d: Token <SPECIALS> Lexeme %s found\n",line_count,yytext);
+			fprintf(tokenout,"<CONST_CHAR, %s> ",yytext);
+			fprintf(logout,"\nLine no %d: Token <CONST_CHAR> Lexeme %s found\n",line_count,yytext);
 			//sTable.push("COMMA",yytext);
 	//	outputfile<<"<COMMA, "<<yytext;
 		}
@@ -491,10 +498,6 @@ DIGIT [0-9]
 					
 					fprintf(tokenout,"<STRING, ");
 
-					for(int i=0;i<str.length();i++){
-						printf("%c",output[i]);
-					}
-					cout<<endl<<endl;
 
 					
 					for(int i=0;i<strlen(yytext);i++){
@@ -502,6 +505,7 @@ DIGIT [0-9]
 							  output2[i]='\t';
 							  qq = '\t';
 							  printf("%c",qq);
+							  fprintf(tokenout,"%c",qq);
 							 
 							  i++;
 							  continue;
@@ -511,6 +515,7 @@ DIGIT [0-9]
 							output2[i] = '\n';
 							qq = '\n';
 							  printf("%c",qq);
+							   fprintf(tokenout,"%c",qq);
 							i++;
 							continue;
 						}
@@ -519,6 +524,7 @@ DIGIT [0-9]
 							output2[i]='\b';
 							qq = '\b';
 							  printf("%c",qq);
+							   fprintf(tokenout,"%c",qq);
 							i++;
 							continue;
 						}
@@ -532,6 +538,7 @@ DIGIT [0-9]
 							output2[i]='\n';
 							qq = '\n';
 							  printf("%c",qq);
+							   fprintf(tokenout,"%c",qq);
 							line_count++;
 							
 							continue;
@@ -548,6 +555,7 @@ DIGIT [0-9]
 							output2[i] = output[i];
 
 							printf("%c",output[i]);
+							 fprintf(tokenout,"%c",output[i]);
 						}
 
 					}
@@ -559,22 +567,36 @@ DIGIT [0-9]
 					
 
 				}
-[\"](.*)[\\][\r\n](.*)[\r\n] {printf("literlas not finished, %s\n",yytext);line_count+=2;}
-[\"](.*)[\r\n] {printf("UNFINISHED literlas: %s\n",yytext); line_count++;}
+[\"](.*)[\\][\r\n](.*)[\r\n] {
+
+								printf("literlas not finished, %s",yytext);
+								fprintf(logout,"\nError at line no %d: Unterminated String %s",line_count,yytext);
+								line_count+=2;
+								error_count++;
+
+								}
+[\"](.*)[\r\n] {
+			printf("UNFINISHED literlas: %s\n",yytext); 
+			fprintf(logout,"\nError at line no %d: Unterminated String %s",line_count,yytext);
+			line_count++;
+			error_count++;
+
+				}
+
 
 {CONST_INT} {printf("%s CONST_INT\n",yytext);
 			fprintf(tokenout,"<CONST_INT, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <INT> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <INT> Lexeme %s found\n",line_count,yytext);
 			}
 
 {CONST_FLOAT} {printf("%s CONST_FLOAT\n",yytext);
 			fprintf(tokenout,"<CONST_FLOAT, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <CONST_FLOAT> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <CONST_FLOAT> Lexeme %s found\n",line_count,yytext);
 			}
 
 {ASSIGNOP} {printf("ASSIGNOP <%s> found\n",yytext);
 			fprintf(tokenout,"<ASSIGNOP, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <ASSIGNOP> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <ASSIGNOP> Lexeme %s found\n",line_count,yytext);
 		
 		//outputfile<<"<ASSIGNOP, "<<yytext;
 	}
@@ -582,7 +604,7 @@ DIGIT [0-9]
 
 {IDENTIFIER} {printf("IDENTIFIER <%s> found\n",yytext);
 			fprintf(tokenout,"<ID, %s> ",yytext);
-			fprintf(logout,"Line no %d: TOKEN <ID> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <ID> Lexeme %s found\n",line_count,yytext);
 		
 		//outputfile<<"<ID, "<<yytext;
 	}
@@ -612,7 +634,13 @@ DIGIT [0-9]
 
 
 
-<<EOF>> {printf("Total Line Number: %d \n",line_count); return 0;}
+<<EOF>> {printf("Total Line Number: %d \n",line_count);
+		
+		printf("Total errors: %d \n",error_count);
+		 fprintf(logout,"\nTotal lines: %d\n",line_count);
+		 fprintf(logout,"Total errors: %d",error_count);
+		  return 0;
+		}
 . {}
 
 %%

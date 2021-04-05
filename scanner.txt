@@ -6,6 +6,7 @@
 '
 'ab cd'
 '\'
+'\f'
 ''
 "abcd
 "abcd\

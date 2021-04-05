@@ -1,13 +1,36 @@
 
 Error at line no 1: Too many decimal points 1.2.345
+
 Error at line no 2: Ill formed Number 1E10.7
+
 Error at line no 3: Invalid prefix on ID or invalid suffix on Number 12abcd
+
 Error at line no 4: Multi character constant error 'ab'
 
 Error at line no 5: Unterminated character 'a
+
 Error at line no 6: Unterminated character '
+
 Error at line no 7: Multi character constant error 'ab cd'
-Error at line no 8: Empty character constant error '\'
-Line no 9: Token <CONST_CHAR> Lexeme ' found
-Line no 13: TOKEN <ID> Lexeme ijk found
-Line no 15: TOKEN <ID> Lexeme def found
+
+Error at line no 8: Unterminated character '\'
+
+Line no 9: Token <CONST_CHAR> Lexeme '\f' found
+
+Error at line no 10: Empty character constant error ''
+
+Error at line no 11: Unterminated String "abcd
+
+Error at line no 12: Unterminated String "abcd\
+efgh
+
+Line no 14: Token <ID> Lexeme ijk found
+
+Error at line no 14: Unterminated String "
+
+Error at line no 15: Unterminated Comment /**abc
+
+Line no 16: Token <ID> Lexeme def found
+
+Total lines: 16
+Total errors: 13

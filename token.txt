@@ -1,1 +1,1 @@
-<CONST_CHAR, a> <ID, ijk> <ID, def> 
+<CONST_CHAR, '\f'> <ID, ijk> <ID, def> 
