@@ -144,8 +144,12 @@ void scopeTable::Insert(SymbolInfo data)
 {
 
     count++;
-    if (count > size)
+    int index = hashFunction(data.getValue());
+    if (index > size-1)
     {
+        cout<<"\ntableDoubling\n";
+        outputfile<<"\ntableDoubling\n";
+
         tableDoubling(); ///double the size of table
 
 
@@ -159,7 +163,9 @@ void scopeTable::Insert(SymbolInfo data)
 
     }
 
-    int index = hashFunction(data.getValue()); // get index of slot
+    
+    outputfile<<"for "<<data.getValue()<<" index: "<<index<<endl;
+     // get index of slot
     SymbolInfo *newNode = new SymbolInfo(data);     // create new node to store data
 
     // push_front()
@@ -393,7 +399,7 @@ void scopeTable::displayTable(FILE *logout)
             outputfile << "< " << current->key << " : " << current->value << " > ";
             
                 /* code */
-                fprintf(logout, "<%s : %s> ",out2,out1);
+                fprintf(logout, "< %s : %s > ",out2,out1);
             
             
             current = current->next;
@@ -462,6 +468,7 @@ bool SymbolTable::push(SymbolInfo sym,FILE* logout) {
        char temp[sym.getValue().length()];
         strcpy(temp,sym.getValue().c_str());
         fprintf(logout, "\n%s already exists in current ScopeTable\n\n\n", temp);
+        outputfile<<"\n"<<sym.getValue()<<" already exists in current ScopeTable\n\n\n";
         return false;
 
     }

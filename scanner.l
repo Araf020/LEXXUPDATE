@@ -251,7 +251,7 @@ DIGIT [0-9]
 {SKIP2} {
 
 	printf("NO ACTION\n %s\n",yytext);
-	fprintf(logout,"\nLine no %d: Token <COMMENT> Lexeme %s comment found\n",line_count,yytext);
+	fprintf(logout,"\nLine no %d: Token <COMMENT> Lexeme %s found\n",line_count,yytext);
 	string str2(yytext);
 	
 	char str1[str2.length()];
@@ -368,7 +368,7 @@ DIGIT [0-9]
 (float) {printf(" <%s> found\n",yytext);
 				//	outputfile<<"<FLOAT> ";
 			fprintf(tokenout,"<FLOAT> ");
-			fprintf(logout,"\nLine no %d: TOKEN <FLOAT> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <FLOAT> Lexeme %s found\n",line_count,yytext);
 					
 					}
 (void) {printf(" <%s> found\n",yytext);
@@ -379,26 +379,26 @@ DIGIT [0-9]
 				}
 (int) {printf(" <%s> found\n",yytext);
 		//outputfile<<"<INT> ";	
-			fprintf(tokenout,"<INT>");
-			fprintf(logout,"\nLine no %d: TOKEN <INT> Lexeme %s found\n",line_count,yytext);
+			fprintf(tokenout,"<INT> ");
+			fprintf(logout,"\nLine no %d: Token <INT> Lexeme %s found\n",line_count,yytext);
 		
 			}
 (char) {printf(" <%s> found\n",yytext);
 			//outputfile<<"<CHAR> ";
 			fprintf(tokenout,"<CHAR> ");
-			fprintf(logout,"\nLine no %d: TOKEN <CHAR> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <CHAR> Lexeme %s found\n",line_count,yytext);
 			}
 (while) {   printf("<%s> found\n",yytext);
 			//outputfile<<"<WHILE> ";
 			fprintf(tokenout,"<WHILE> ");
-			fprintf(logout,"\nLine no %d: TOKEN <WHILE> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <WHILE> Lexeme %s found\n",line_count,yytext);
 	
 		}
 (break) {
 
 			printf("<%s> found\n",yytext);
 			fprintf(tokenout,"<BREAK>");
-			fprintf(logout,"\nLine no %d: TOKEN <BREAK> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <BREAK> Lexeme %s found\n",line_count,yytext);
 	//outputfile<<"<BREAK> ";
 }
 
@@ -406,7 +406,7 @@ DIGIT [0-9]
 
 	printf("<%s> found\n",yytext);
 				fprintf(tokenout,"<DOUBLE> ");
-			fprintf(logout,"\nLine no %d: TOKEN <DOUBLE> Lexeme %s found\n",line_count,yytext);
+			fprintf(logout,"\nLine no %d: Token <DOUBLE> Lexeme %s found\n",line_count,yytext);
 	//outputfile<<"<DOUBLE> ";
 }
 
